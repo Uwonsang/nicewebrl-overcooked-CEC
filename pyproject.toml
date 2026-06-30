@@ -5,7 +5,7 @@ description = "Cross-Environment Cooperation example for NiceWebRL"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "nicewebrl @ git+https://github.com/Uwonsang/nicewebrl.git@fix/advance-block",
+    "nicewebrl @ git+https://github.com/Uwonsang/nicewebrl-cec.git",
     "jaxmarl @ git+https://github.com/Uwonsang/crossenv_ued.git",
     "aiohttp",
     "requests",

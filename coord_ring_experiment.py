@@ -2,10 +2,12 @@ from dotenv import load_dotenv
 from flax import struct
 import jax
 import jax.numpy as jnp
+import numpy as np
 import os
 import pickle
 
 from jaxmarl.viz.overcooked_jitted_visualizer import render_fn as overcooked_render_fn
+from jaxmarl.viz.overcooked_jitted_visualizer import overlay_score_text
 from jaxmarl.environments.overcooked import Overcooked, Actions, State
 from jaxmarl.environments.overcooked.layouts import overcooked_layouts
 from jaxmarl.environments.overcooked.layouts import (
@@ -250,12 +252,12 @@ jax_web_env_tutorial.precompile(dummy_env_params=default_params)
 
 
 # Define rendering function
-def render_fn(timestep: nicewebrl.TimeStep):
+def render_fn(timestep: nicewebrl.Timestep):
   image = overcooked_render_fn(timestep.state)
   return image.astype(jnp.uint8)
 
 
-def render_fn_tutorial(timestep: nicewebrl.TimeStep):
+def render_fn_tutorial(timestep: nicewebrl.Timestep):
   image = overcooked_render_fn(timestep.state)
   return image.astype(jnp.uint8)
 
@@ -416,9 +418,11 @@ def make_image_html(src):
 
 
 async def env_stage_display_fn(
-  stage: MultiAgentEnvStage, container: ui.element, timestep: nicewebrl.TimeStep
+  stage: MultiAgentEnvStage, container: ui.element, timestep: nicewebrl.Timestep
 ):
   state_image = stage.render_fn(timestep)
+  score = stage.get_user_data("score", 0.0)
+  state_image = overlay_score_text(np.array(state_image), score)
   state_image = base64_npimage(state_image)
   stage_state = stage.get_user_data("stage_state")
   human_color = stage.get_user_data("human_color")
@@ -442,7 +446,7 @@ async def env_stage_display_fn(
     ui.html(make_image_html(src=state_image))
 
 
-def evaluate_success_fn(timestep: nicewebrl.TimeStep, env_params: struct.PyTreeNode):
+def evaluate_success_fn(timestep: nicewebrl.Timestep, env_params: struct.PyTreeNode):
   """Episode finishes if person every gets 1 achievement"""
   success = int(timestep.state.terminal)
   return success

@@ -1397,7 +1397,7 @@ wheels = [
 [[package]]
 name = "jaxmarl"
 version = "0.0.3"
-source = { git = "https://github.com/Uwonsang/crossenv_ued.git#36cae47dd9dd4c15f3a3972c1c2467d2dd5f1f26" }
+source = { git = "https://github.com/Uwonsang/crossenv_ued.git#7b6038a13c840ad459167ba17ccf027360cf9425" }
 dependencies = [
     { name = "distrax" },
     { name = "dotmap" },
@@ -2306,7 +2306,7 @@ wheels = [
 [[package]]
 name = "nicewebrl"
 version = "0.0.3"
-source = { git = "https://github.com/Uwonsang/nicewebrl.git?rev=fix%2Fadvance-block#62544d32aad89c77c4275fac1968ccaf698a9fad" }
+source = { git = "https://github.com/Uwonsang/nicewebrl-cec.git#a44ef710d027ffd90995c7d2bfdca215dda2bf97" }
 dependencies = [
     { name = "distrax" },
     { name = "flax" },
@@ -2343,7 +2343,7 @@ requires-dist = [
     { name = "black", marker = "extra == 'dev'" },
     { name = "isort", marker = "extra == 'dev'" },
     { name = "jaxmarl", git = "https://github.com/Uwonsang/crossenv_ued.git" },
-    { name = "nicewebrl", git = "https://github.com/Uwonsang/nicewebrl.git?rev=fix%2Fadvance-block" },
+    { name = "nicewebrl", git = "https://github.com/Uwonsang/nicewebrl-cec.git" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "requests" },
 ]

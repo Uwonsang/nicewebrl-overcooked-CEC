@@ -1,0 +1,12 @@
+FROM wilf93/jax_ued:v4
+
+# Keep the CUDA/JAX environment from the base image and add uv as a
+# standalone binary. Project dependencies are synchronized at startup so
+# changes to pyproject.toml or uv.lock are picked up automatically.
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1
+
+CMD ["sh", "-c", "uv sync --python 3.12 && uv run python web_app.py ${EXPERIMENT:-counter_circuit}"]

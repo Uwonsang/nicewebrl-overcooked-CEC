@@ -70,7 +70,7 @@ actions = [
 ]
 action_array = jnp.array([a.value for a in actions])
 action_keys = ["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp", "s", " "]
-action_to_name = [a.name for a in actions]
+action_to_name = ["위", "아래", "왼쪽", "오른쪽", "대기", "상호작용"]
 
 
 def initialize_environment(config):
@@ -284,21 +284,21 @@ render_fn_tutorial = (
 async def user_survey_display_fn(stage, container):
   nicewebrl.clear_element(container)
   with container.style("align-items: center;"):
-    ui.markdown("## User Survey")
+    ui.markdown("## 사용자 설문")
 
-    ui.markdown("Please enter your Prolific ID below.")
-    prolific_id = ui.input(placeholder="Your Prolific ID")
+    ui.markdown("아래에 Prolific ID를 입력해 주세요.")
+    prolific_id = ui.input(placeholder="Prolific ID")
 
-    ui.markdown("Please answer the following questions about your experience.")
+    ui.markdown("방금 AI 에이전트와 플레이한 경험을 바탕으로 답해 주세요.")
 
     questions = [
-      "The agent adapted to me when making decisions.",
-      "The agent was consistent in its actions.",
-      "The agent's actions were human-like.",
-      "The agent frequently got in my way.",
-      "The agent's behavior was frustrating.",
-      "Overall, I enjoyed playing with the agent.",
-      "Overall, I felt that the agent's ability to coordinate with me was:",
+      ("The agent adapted to me when making decisions.", "AI 에이전트는 의사결정을 할 때 나에게 맞춰 행동했다."),
+      ("The agent was consistent in its actions.", "AI 에이전트의 행동은 일관적이었다."),
+      ("The agent's actions were human-like.", "AI 에이전트의 행동은 사람처럼 자연스러웠다."),
+      ("The agent frequently got in my way.", "AI 에이전트는 자주 내 움직임을 방해했다."),
+      ("The agent's behavior was frustrating.", "AI 에이전트의 행동 때문에 답답함을 느꼈다."),
+      ("Overall, I enjoyed playing with the agent.", "전반적으로 AI 에이전트와 함께 플레이하는 것이 즐거웠다."),
+      ("Overall, I felt that the agent's ability to coordinate with me was:", "전반적으로 AI 에이전트가 나와 협력하는 능력은 어떠했습니까?"),
     ]
 
     responses = {"prolific_id": prolific_id}
@@ -316,27 +316,27 @@ async def user_survey_display_fn(stage, container):
     # # Add prolific ID completion check
     # prolific_id.on_change(create_on_change('prolific'))
 
-    for i, question in enumerate(questions):
-      ui.markdown(question)
+    for i, (question_key, question_text) in enumerate(questions):
+      ui.markdown(question_text)
       options = (
         {
-          "Strongly disagree": "Strongly disagree",
-          "Disagree": "Disagree",
-          "Neutral": "Neutral",
-          "Agree": "Agree",
-          "Strongly agree": "Strongly agree",
+          "Strongly disagree": "전혀 그렇지 않다",
+          "Disagree": "그렇지 않다",
+          "Neutral": "보통이다",
+          "Agree": "그렇다",
+          "Strongly agree": "매우 그렇다",
         }
         if i < len(questions) - 1
         else {
-          "Very poor": "Very poor",
-          "Poor": "Poor",
-          "Neutral": "Neutral",
-          "Good": "Good",
-          "Very good": "Very good",
+          "Very poor": "매우 부족했다",
+          "Poor": "부족했다",
+          "Neutral": "보통이었다",
+          "Good": "좋았다",
+          "Very good": "매우 좋았다",
         }
       )
       dropdown = ui.select(options, on_change=create_on_change(i))
-      responses[question] = dropdown
+      responses[question_key] = dropdown
 
     ui.markdown(f"{stage.body}")
 
@@ -344,7 +344,7 @@ async def user_survey_display_fn(stage, container):
     return {k: v.value for k, v in responses.items()}
 
 
-def make_survey_stage(name="User Survey"):
+def make_survey_stage(name="사용자 설문"):
   stage = FeedbackStage(
     name=name,
     body="",
@@ -370,27 +370,27 @@ async def instruction_display_fn(stage, container):
     nicewebrl.clear_element(container)
     ui.markdown(f"## {stage.name}")
     ui.markdown(
-      "You'll be playing a game of Overcooked with an agent. The agent will be trying to help you complete tasks."
+      "AI 에이전트와 함께 Overcooked를 플레이합니다. AI 에이전트는 과제를 완료할 수 있도록 여러분과 협력합니다."
     )
     ui.markdown(
-      "You'll be playing as the human, and the agent will be playing as the other player."
+      "여러분은 한 캐릭터를 조작하고, AI 에이전트는 다른 캐릭터를 조작합니다."
     )
     ui.markdown(
-      "You'll be given a task to complete, and the agent will be trying to help you complete it."
+      "주어진 과제를 AI 에이전트와 협력하여 완료해 주세요."
     )
-    ui.markdown("Use your arrow keys to move up, down, left, and right.")
-    ui.markdown("Press the space bar to interact with the environment.")
-    ui.markdown("Press the s key to stay in place.")
+    ui.markdown("키보드의 방향키를 사용하여 위, 아래, 왼쪽, 오른쪽으로 이동합니다.")
+    ui.markdown("물건을 집거나 내려놓는 등 상호작용하려면 스페이스바를 누릅니다.")
+    ui.markdown("제자리에서 기다리려면 S 키를 누릅니다.")
 
 
 async def tutorial_display_fn(stage, container):
   with container.style("align-items: center;"):
     nicewebrl.clear_element(container)
     ui.markdown(
-      "You will now play a tutorial stage so you can get used to the controls."
+      "먼저 조작 방법에 익숙해질 수 있도록 튜토리얼을 진행합니다."
     )
     ui.markdown(
-      "Please do not close or leave this page until the experiment is complete, as you will not be able to return."
+      "실험이 끝날 때까지 이 페이지를 닫거나 벗어나지 마세요. 페이지를 나가면 다시 돌아올 수 없습니다."
     )
 
 
@@ -398,7 +398,7 @@ async def post_tutorial_display_fn(stage, container):
   with container.style("align-items: center;"):
     ui.markdown(f"## {stage.name}")
     ui.markdown(
-      "Now that you've seen how to play the game, the actual experiment will begin."
+      "게임 방법을 확인했습니다. 이제 본 실험을 시작합니다."
     )
 
 
@@ -426,6 +426,9 @@ async def env_stage_display_fn(
   state_image = base64_npimage(state_image)
   stage_state = stage.get_user_data("stage_state")
   human_color = stage.get_user_data("human_color")
+  human_color_ko = {"blue": "파란색", "green": "초록색"}.get(
+    human_color, human_color
+  )
 
   with container.style("align-items: center;"):
     nicewebrl.clear_element(container)
@@ -437,7 +440,7 @@ async def env_stage_display_fn(
         ui.label().bind_text_from(
           stage_state,
           "nepisodes",
-          lambda n: f"Try: {n}/{stage.max_episodes}. You control the {human_color} agent.",
+          lambda n: f"진행: {n}/{stage.max_episodes}. 여러분은 {human_color_ko} 캐릭터를 조작합니다.",
         )
 
     # --------------------------------
@@ -460,12 +463,12 @@ async def transition_display_fn(stage, container):
     nicewebrl.clear_element(container)
     ui.markdown(f"## {stage.name}")
     ui.markdown(
-      "After completing the survey, please click the button below to continue."
+      "설문을 완료한 후 아래 버튼을 눌러 계속해 주세요."
     )
 
 
-instruction_stage = Stage(name="Instuctions", display_fn=instruction_display_fn)
-tutorial_stage = Stage(name="Tutorial", display_fn=tutorial_display_fn)
+instruction_stage = Stage(name="게임 안내", display_fn=instruction_display_fn)
+tutorial_stage = Stage(name="튜토리얼 안내", display_fn=tutorial_display_fn)
 tutorial_env_stage = MultiAgentEnvStage(
   name=f"tutorial",
   web_env=jax_web_env_tutorial,
@@ -496,7 +499,7 @@ tutorial_env_stage = MultiAgentEnvStage(
   human_id=None,  # will randomly shuffle human id
 )
 
-post_tutorial_stage = Stage(name="Post-Tutorial", display_fn=post_tutorial_display_fn)
+post_tutorial_stage = Stage(name="본 실험 안내", display_fn=post_tutorial_display_fn)
 all_stages.append(instruction_stage)
 all_stages.append(tutorial_stage)
 all_stages.append(tutorial_env_stage)
@@ -546,10 +549,10 @@ for model_name, model in model_dict.items():
   )
 
   transition_stage = Stage(
-    name="Post-Survey",
+    name="설문 완료",
     display_fn=transition_display_fn,
   )
-  survey_stage = make_survey_stage(f"{model_name} Coord Ring Survey")
+  survey_stage = make_survey_stage(f"{model_name} Coord Ring 설문")
 
   env_block = Block(
     stages=[

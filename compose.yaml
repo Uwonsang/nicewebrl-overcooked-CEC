@@ -1,0 +1,23 @@
+services:
+  overcooked:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: leejooyub_jaxued_1
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    ipc: host
+    stdin_open: true
+    tty: true
+    environment:
+      EXPERIMENT: ${EXPERIMENT:-counter_circuit}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]

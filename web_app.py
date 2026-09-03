@@ -82,11 +82,11 @@ async def save_data(final_save=True, feedback=None, **kwargs):
 async def make_consent_form(container):
   consent_given = asyncio.Event()
   with container:
-    ui.markdown("## Consent Form")
+    ui.markdown("## 연구 참여 동의")
     with open("consent.md", "r") as consent_file:
       consent_text = consent_file.read()
     ui.markdown(consent_text)
-    ui.checkbox("I agree to participate.",
+    ui.checkbox("위 내용을 확인했으며 연구 참여에 동의합니다.",
                 on_change=lambda: consent_given.set())
 
   await consent_given.wait()
@@ -96,16 +96,16 @@ async def collect_demographic_info(container):
   # Create a markdown title for the section
   nicewebrl.clear_element(container)
   with container:
-    ui.markdown("## Demographic Info")
-    ui.markdown("Please fill out the following information.")
+    ui.markdown("## 기본 정보")
+    ui.markdown("아래 정보를 입력해 주세요.")
 
     with ui.column():
       with ui.column():
-        ui.label("Biological Sex")
-        sex_input = ui.radio(["Male", "Female"], value="Male").props("inline")
+        ui.label("성별")
+        sex_input = ui.radio(["남성", "여성"], value="남성").props("inline")
 
       # Collect age with a textbox input
-      age_input = ui.input("Age")
+      age_input = ui.input("나이")
 
     # Button to submit and store the data
     async def submit():
@@ -114,13 +114,13 @@ async def collect_demographic_info(container):
 
       # Validation for age input
       if not age.isdigit() or not (0 < int(age) < 100):
-        ui.notify("Please enter a valid age between 1 and 99.", type="warning")
+        ui.notify("1세부터 99세 사이의 나이를 입력해 주세요.", type="warning")
         return
       app.storage.user["age"] = int(age)
       app.storage.user["sex"] = sex
       logger.info(f"age: {int(age)}, sex: {sex}")
 
-    button = ui.button("Submit", on_click=submit)
+    button = ui.button("제출", on_click=submit)
     await button.clicked()
 
 
@@ -148,9 +148,9 @@ async def finish_experiment(meta_container, stage_container):
     app.storage.user["experiment_finished"] = True
     with meta_container:
       nicewebrl.clear_element(meta_container)
-      ui.markdown(f"## Saving data. Please wait")
+      ui.markdown("## 데이터를 저장하고 있습니다. 잠시만 기다려 주세요.")
       ui.markdown(
-          "**Once the data is uploaded, this app will automatically move to the next screen**"
+          "**데이터 저장이 완료되면 자동으로 다음 화면으로 이동합니다.**"
       )
 
     # when over, delete user data.
@@ -163,10 +163,10 @@ async def finish_experiment(meta_container, stage_container):
     with meta_container:
       nicewebrl.clear_element(meta_container)
       ui.markdown(
-          "Please provide feedback on the experiment here. For example, please describe if anything went wrong or if you have any suggestions for the experiment."
+          "실험에 대한 의견을 자유롭게 적어 주세요. 문제가 있었거나 개선할 점이 있다면 함께 알려 주세요."
       )
       text = ui.textarea().style("width: 80%;")  # Set width to 80% of the container
-      button = ui.button("Submit")
+      button = ui.button("제출")
       await button.clicked()
       await submit(text.value)
 
@@ -176,19 +176,19 @@ async def finish_experiment(meta_container, stage_container):
   with meta_container:
     nicewebrl.clear_element(meta_container)
 
-    ui.markdown("# Experiment over")
-    ui.markdown("## Data saved")
+    ui.markdown("# 실험이 종료되었습니다")
+    ui.markdown("## 데이터가 저장되었습니다")
     ui.markdown(
-        "### Please record the following code which you will need to provide for compensation"
+        "### 보상 지급에 필요한 아래 코드를 기록해 주세요."
     )
     ui.markdown(f"### socialrl.cook")
-    ui.markdown("#### You may close the browser")
+    ui.markdown("#### 이제 브라우저를 닫아도 됩니다.")
 
 
 nicewebrl.run(
     storage_secret="a_very_secret_key_for_testing_only_12345",
     experiment_file=experiment_file,
-    title="Overcooked CEC Experiment",
+    title="Overcooked 인간-AI 협력 실험",
     reload=False,
     on_startup_fn=on_startup,
     on_termination_fn=finish_experiment,

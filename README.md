@@ -30,6 +30,17 @@ To run the coordination ring experiment, run the following command:
 uv run python web_app.py 'coord_ring'
 ```
 
+## Extended Analysis
+
+Generate per-user, per-map, per-algorithm, and total CSV/JSON reports:
+
+```bash
+uv run python analysis_extend.py
+```
+
+Reports are written under `analysis/`. Collisions are marked as unavailable
+because the current experiment records do not store collision events.
+
 ## Deploying online with fly.io
 
 **Prerequisites**: Install the [fly CLI](https://fly.io/docs/hands-on/install-flyctl/)

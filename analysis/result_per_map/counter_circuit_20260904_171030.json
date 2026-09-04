@@ -1,0 +1,138 @@
+{
+  "map": "counter_circuit",
+  "overall": {
+    "runs": 4,
+    "completed_runs": 3,
+    "incomplete_runs": 1,
+    "successful_completed_runs": 2,
+    "success_rate": 0.6667,
+    "reward_positive_runs_including_incomplete": 3,
+    "total_reward": 180.0,
+    "mean_reward": 45.0,
+    "total_successful_deliveries": 9.0,
+    "mean_successful_deliveries": 2.25,
+    "collisions": null,
+    "collision_status": "not_recorded",
+    "mean_qualitative_rating": 3.0,
+    "survey_question_means": {
+      "Overall, I enjoyed playing with the agent.": 3.0,
+      "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+      "The agent adapted to me when making decisions.": 3.0,
+      "The agent frequently got in my way.": 3.5,
+      "The agent was consistent in its actions.": 3.0,
+      "The agent's actions were human-like.": 3.5,
+      "The agent's behavior was frustrating.": 4.0
+    },
+    "survey_scored_question_means": {
+      "Overall, I enjoyed playing with the agent.": 3.0,
+      "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+      "The agent adapted to me when making decisions.": 3.0,
+      "The agent frequently got in my way.": 2.5,
+      "The agent was consistent in its actions.": 3.0,
+      "The agent's actions were human-like.": 3.5,
+      "The agent's behavior was frustrating.": 2.0
+    }
+  },
+  "algorithms": {
+    "coord_fcp": {
+      "runs": 1,
+      "completed_runs": 1,
+      "incomplete_runs": 0,
+      "successful_completed_runs": 0,
+      "success_rate": 0.0,
+      "reward_positive_runs_including_incomplete": 0,
+      "total_reward": 0.0,
+      "mean_reward": 0.0,
+      "total_successful_deliveries": 0.0,
+      "mean_successful_deliveries": 0.0,
+      "collisions": null,
+      "collision_status": "not_recorded",
+      "mean_qualitative_rating": null,
+      "survey_question_means": {},
+      "survey_scored_question_means": {}
+    },
+    "ik_finetune": {
+      "runs": 1,
+      "completed_runs": 0,
+      "incomplete_runs": 1,
+      "successful_completed_runs": 0,
+      "success_rate": null,
+      "reward_positive_runs_including_incomplete": 1,
+      "total_reward": 40.0,
+      "mean_reward": 40.0,
+      "total_successful_deliveries": 2.0,
+      "mean_successful_deliveries": 2.0,
+      "collisions": null,
+      "collision_status": "not_recorded",
+      "mean_qualitative_rating": null,
+      "survey_question_means": {},
+      "survey_scored_question_means": {}
+    },
+    "sk": {
+      "runs": 1,
+      "completed_runs": 1,
+      "incomplete_runs": 0,
+      "successful_completed_runs": 1,
+      "success_rate": 1.0,
+      "reward_positive_runs_including_incomplete": 1,
+      "total_reward": 80.0,
+      "mean_reward": 80.0,
+      "total_successful_deliveries": 4.0,
+      "mean_successful_deliveries": 4.0,
+      "collisions": null,
+      "collision_status": "not_recorded",
+      "mean_qualitative_rating": 2.4286,
+      "survey_question_means": {
+        "Overall, I enjoyed playing with the agent.": 2.0,
+        "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+        "The agent adapted to me when making decisions.": 2.0,
+        "The agent frequently got in my way.": 4.0,
+        "The agent was consistent in its actions.": 2.0,
+        "The agent's actions were human-like.": 3.0,
+        "The agent's behavior was frustrating.": 4.0
+      },
+      "survey_scored_question_means": {
+        "Overall, I enjoyed playing with the agent.": 2.0,
+        "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+        "The agent adapted to me when making decisions.": 2.0,
+        "The agent frequently got in my way.": 2.0,
+        "The agent was consistent in its actions.": 2.0,
+        "The agent's actions were human-like.": 3.0,
+        "The agent's behavior was frustrating.": 2.0
+      }
+    },
+    "sk_e3t": {
+      "runs": 1,
+      "completed_runs": 1,
+      "incomplete_runs": 0,
+      "successful_completed_runs": 1,
+      "success_rate": 1.0,
+      "reward_positive_runs_including_incomplete": 1,
+      "total_reward": 60.0,
+      "mean_reward": 60.0,
+      "total_successful_deliveries": 3.0,
+      "mean_successful_deliveries": 3.0,
+      "collisions": null,
+      "collision_status": "not_recorded",
+      "mean_qualitative_rating": 3.5714,
+      "survey_question_means": {
+        "Overall, I enjoyed playing with the agent.": 4.0,
+        "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+        "The agent adapted to me when making decisions.": 4.0,
+        "The agent frequently got in my way.": 3.0,
+        "The agent was consistent in its actions.": 4.0,
+        "The agent's actions were human-like.": 4.0,
+        "The agent's behavior was frustrating.": 4.0
+      },
+      "survey_scored_question_means": {
+        "Overall, I enjoyed playing with the agent.": 4.0,
+        "Overall, I felt that the agent's ability to coordinate with me was:": 4.0,
+        "The agent adapted to me when making decisions.": 4.0,
+        "The agent frequently got in my way.": 3.0,
+        "The agent was consistent in its actions.": 4.0,
+        "The agent's actions were human-like.": 4.0,
+        "The agent's behavior was frustrating.": 2.0
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "demographics": {
+    "user_id": 2368466509,
+    "age": 28,
+    "sex": "Male"
+  },
+  "maps": {
+    "counter_circuit": {
+      "source_file": "data/user=2368466509_name=counter_circuit_debug=0.json",
+      "debug": 0,
+      "demographics": {
+        "user_id": 2368466509,
+        "age": 28,
+        "sex": "Male"
+      },
+      "algorithms": {
+        "ik_finetune": {
+          "total_reward": 40.0,
+          "successful_deliveries": 2.0,
+          "success": true,
+          "success_rate": 1.0,
+          "completed": false,
+          "nsteps": 133,
+          "nepisodes": 1,
+          "record_count": 132,
+          "collisions": null,
+          "collision_status": "not_recorded",
+          "survey": null
+        },
+        "sk_e3t": {
+          "total_reward": 60.0,
+          "successful_deliveries": 3.0,
+          "success": true,
+          "success_rate": 1.0,
+          "completed": true,
+          "nsteps": 201,
+          "nepisodes": 1,
+          "record_count": 201,
+          "collisions": null,
+          "collision_status": "not_recorded",
+          "survey": {
+            "responses": {
+              "prolific_id": "123",
+              "The agent adapted to me when making decisions.": "Agree",
+              "The agent was consistent in its actions.": "Agree",
+              "The agent's actions were human-like.": "Agree",
+              "The agent frequently got in my way.": "Neutral",
+              "The agent's behavior was frustrating.": "Agree",
+              "Overall, I enjoyed playing with the agent.": "Agree",
+              "Overall, I felt that the agent's ability to coordinate with me was:": "Good"
+            },
+            "numeric_scores": {
+              "The agent adapted to me when making decisions.": 4,
+              "The agent was consistent in its actions.": 4,
+              "The agent's actions were human-like.": 4,
+              "The agent frequently got in my way.": 3,
+              "The agent's behavior was frustrating.": 4,
+              "Overall, I enjoyed playing with the agent.": 4,
+              "Overall, I felt that the agent's ability to coordinate with me was:": 4
+            },
+            "scored_numeric_scores": {
+              "The agent adapted to me when making decisions.": 4,
+              "The agent was consistent in its actions.": 4,
+              "The agent's actions were human-like.": 4,
+              "The agent frequently got in my way.": 3,
+              "The agent's behavior was frustrating.": 2,
+              "Overall, I enjoyed playing with the agent.": 4,
+              "Overall, I felt that the agent's ability to coordinate with me was:": 4
+            },
+            "mean_rating": 3.5714
+          }
+        }
+      }
+    }
+  }
+}

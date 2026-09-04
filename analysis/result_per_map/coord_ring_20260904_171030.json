@@ -1,0 +1,39 @@
+{
+  "map": "coord_ring",
+  "overall": {
+    "runs": 1,
+    "completed_runs": 0,
+    "incomplete_runs": 1,
+    "successful_completed_runs": 0,
+    "success_rate": null,
+    "reward_positive_runs_including_incomplete": 0,
+    "total_reward": 0.0,
+    "mean_reward": 0.0,
+    "total_successful_deliveries": 0.0,
+    "mean_successful_deliveries": 0.0,
+    "collisions": null,
+    "collision_status": "not_recorded",
+    "mean_qualitative_rating": null,
+    "survey_question_means": {},
+    "survey_scored_question_means": {}
+  },
+  "algorithms": {
+    "sk": {
+      "runs": 1,
+      "completed_runs": 0,
+      "incomplete_runs": 1,
+      "successful_completed_runs": 0,
+      "success_rate": null,
+      "reward_positive_runs_including_incomplete": 0,
+      "total_reward": 0.0,
+      "mean_reward": 0.0,
+      "total_successful_deliveries": 0.0,
+      "mean_successful_deliveries": 0.0,
+      "collisions": null,
+      "collision_status": "not_recorded",
+      "mean_qualitative_rating": null,
+      "survey_question_means": {},
+      "survey_scored_question_means": {}
+    }
+  }
+}

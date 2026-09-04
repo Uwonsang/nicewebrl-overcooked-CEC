@@ -285,8 +285,8 @@ async def user_survey_display_fn(stage, container):
   with container.style("align-items: center;"):
     ui.markdown("## 사용자 설문")
 
-    ui.markdown("아래에 Prolific ID를 입력해 주세요.")
-    prolific_id = ui.input(placeholder="Prolific ID")
+    ui.markdown("아래에 ID를 입력해 주세요.")
+    prolific_id = ui.input(placeholder="ID")
 
     ui.markdown("방금 AI 에이전트와 플레이한 경험을 바탕으로 답해 주세요.")
 

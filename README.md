@@ -30,26 +30,6 @@ To run the coordination ring experiment, run the following command:
 uv run python web_app.py 'coord_ring'
 ```
 
-## Local GPU development with Docker
-
-The development container uses `wilf93/jax_ued:v4`, GPU 0, and mounts this
-repository at `/app`. Build and start the Counter Circuit experiment with:
-
-```bash
-docker compose up --build
-```
-
-After the first build, `docker compose up` is enough. Open
-<http://localhost:8080> in a browser.
-
-To run the Coordination Ring experiment instead:
-
-```bash
-EXPERIMENT=coord_ring docker compose up
-```
-
-Stop and remove the container with `docker compose down`.
-
 ## Deploying online with fly.io
 
 **Prerequisites**: Install the [fly CLI](https://fly.io/docs/hands-on/install-flyctl/)

@@ -2328,6 +2328,8 @@ dependencies = [
     { name = "jaxmarl" },
     { name = "nicewebrl" },
     { name = "requests" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 
 [package.optional-dependencies]
@@ -2346,6 +2348,7 @@ requires-dist = [
     { name = "nicewebrl", git = "https://github.com/Uwonsang/nicewebrl-cec.git" },
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "requests" },
+    { name = "scipy" },
 ]
 provides-extras = ["dev"]
 

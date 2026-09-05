@@ -16,4 +16,4 @@ RUN rm -rf .venv && uv sync --python 3.12
 ENV PYTHONUNBUFFERED=1
 ENV LOG_LEVEL=DEBUG
 
-CMD ["uv", "run", "python", "web_app.py", "counter_circuit"]
+CMD ["uv", "run", "python", "web_app.py"]

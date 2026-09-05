@@ -14,32 +14,36 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv sync --python 3.12
 ```
 
-## Counter Circuit Experiment
+## Run the Experiment
 
-To run the counter circuit experiment, run the following command:
-
-```bash
-uv run python web_app.py 'counter_circuit'
-```
-
-## Coordination Ring Experiment
-
-To run the coordination ring experiment, run the following command:
+Edit `LAYOUTS_TO_TEST` and `ALGORITHMS_TO_TEST` near the top of `web_app.py`,
+then run:
 
 ```bash
-uv run python web_app.py 'coord_ring'
+uv run python web_app.py
 ```
+
+All selected algorithm-layout pairs are tested in one participant session.
+Layout selection is controlled only by `LAYOUTS_TO_TEST`; command-line layout
+arguments are not used.
 
 ## Extended Analysis
 
-Generate per-user, per-map, per-algorithm, and total CSV/JSON reports:
+Generate per-user, per-map, per-algorithm, and total CSV/JSON/PNG reports:
 
 ```bash
 uv run python analysis_extend.py
 ```
 
-Reports are written under `analysis/`. Collisions are marked as unavailable
-because the current experiment records do not store collision events.
+Reports are written under `analysis/`. The paper-oriented summaries include
+mean recipes made, human-AI collisions, seven qualitative ratings, standard
+errors, Pearson survey correlations, Cronbach's alpha, and pairwise Welch
+t-tests. Runs collected before the paper-metric logger was added remain
+readable, but their collision values are marked as unavailable.
+
+New experiment runs explicitly record the selected model checkpoint, human and
+AI actions, delivery events, agent positions, and movement collisions. A
+collision means that the agents tried to enter the same cell or swap places.
 
 ## Deploying online with fly.io
 

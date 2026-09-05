@@ -26,7 +26,6 @@ import nicewebrl
 from nicewebrl import MultiAgentJaxWebEnv, base64_npimage, TimestepWrapper
 from nicewebrl import (
   Stage,
-  MultiAgentEnvStage,
   FeedbackStage,
   Block,
   prepare_blocks,
@@ -34,6 +33,7 @@ from nicewebrl import (
 )
 from nicewebrl import get_logger
 from actor_networks import ActorCriticRNN, ScannedRNN, ActorCriticE3T
+from paper_metrics import PaperMetricsMultiAgentEnvStage as MultiAgentEnvStage
 import pdb
 import asyncio
 
@@ -174,7 +174,7 @@ default_params = {"random_reset_fn": 0}
 base_agent_model = ActorCriticRNN(action_dim=len(actions), config=base_config)
 e3t_agent_model = ActorCriticE3T(action_dim=len(actions), config=base_config)
 
-model_dict = {
+available_model_dict = {
   "ik": base_agent_model,
   "ik_finetune": base_agent_model,
   "sk": base_agent_model,
@@ -183,50 +183,58 @@ model_dict = {
   "counter_sk": base_agent_model,
   "counter_fcp": base_agent_model,
 }
-param_dict = {
-  "ik": [],
-  "ik_finetune": [],
-  "sk": [],
-  "sk_e3t": [],
-  "sk_fcp": [],
-  "counter_sk": [],
-  "counter_fcp": [],
+requested_algorithms = os.environ.get(
+  "NICEWEBRL_ALGORITHMS", ",".join(available_model_dict)
+).split(",")
+algorithm_aliases = {"cross_sk": "counter_sk", "cross_fcp": "counter_fcp"}
+requested_algorithms = [
+  algorithm_aliases.get(name.strip(), name.strip())
+  for name in requested_algorithms
+  if name.strip()
+]
+unknown_algorithms = [
+  name for name in requested_algorithms if name not in available_model_dict
+]
+if unknown_algorithms:
+  raise ValueError(f"Algorithms unavailable for coord_ring: {unknown_algorithms}")
+model_dict = {
+  name: available_model_dict[name] for name in requested_algorithms
 }
-num_seed_dict = {
-  "ik": 0,
-  "ik_finetune": 0,
-  "sk": 0,
-  "sk_e3t": 0,
-  "sk_fcp": 0,
-  "counter_sk": 0,
-  "counter_fcp": 0,
-}
+models_to_load = dict(model_dict)
+models_to_load.setdefault("ik", available_model_dict["ik"])
+param_dict = {name: [] for name in models_to_load}
+num_seed_dict = {name: 0 for name in models_to_load}
+checkpoint_name_dict = {name: [] for name in models_to_load}
 
-for model_name in model_dict.keys():
+for model_name in models_to_load:
   if "counter" in model_name:
     continue
   model_dir = f"models/{model_name}/coord_ring/"
   # load all files in model_dir
-  files = os.listdir(model_dir)
+  files = sorted(os.listdir(model_dir))
   for file in files:
     with open(os.path.join(model_dir, file), "rb") as f:
       params = pickle.load(f)["params"]
       param_dict[model_name].append(params)
       num_seed_dict[model_name] += 1
+      checkpoint_name_dict[model_name].append(os.path.join(model_dir, file))
   param_dict[model_name] = jax.tree_map(
     lambda *x: jnp.stack(x), *param_dict[model_name]
   )
 
-for model_name in ["sk", "sk_fcp"]:  # add useless counter circuit models
+for model_name in ["sk", "sk_fcp"]:  # optionally add counter circuit models
   model_dir = f"models/{model_name}/counter_circuit/"
   dict_name = "counter_sk" if model_name == "sk" else "counter_fcp"
+  if dict_name not in model_dict:
+    continue
   # load all files in model_dir
-  files = os.listdir(model_dir)
+  files = sorted(os.listdir(model_dir))
   for file in files:
     with open(os.path.join(model_dir, file), "rb") as f:
       params = pickle.load(f)["params"]
       param_dict[dict_name].append(params)
       num_seed_dict[dict_name] += 1
+      checkpoint_name_dict[dict_name].append(os.path.join(model_dir, file))
   param_dict[dict_name] = jax.tree_map(lambda *x: jnp.stack(x), *param_dict[dict_name])
 
 init_hidden_state_fn = lambda: ScannedRNN.initialize_carry(
@@ -497,6 +505,8 @@ tutorial_env_stage = MultiAgentEnvStage(
   init_hidden_state_fn=init_hidden_state_fn,
   max_timesteps=MAX_EPISODE_TIMESTEPS,
   human_id=None,  # will randomly shuffle human id
+  action_values=action_array,
+  checkpoint_names=checkpoint_name_dict["ik"],
 )
 
 post_tutorial_stage = Stage(name="본 실험 안내", display_fn=post_tutorial_display_fn)
@@ -546,6 +556,8 @@ for model_name, model in model_dict.items():
     init_hidden_state_fn=init_hidden_state_fn,
     max_timesteps=MAX_EPISODE_TIMESTEPS,
     human_id=None,  # will randomly shuffle human id
+    action_values=action_array,
+    checkpoint_names=checkpoint_name_dict[model_name],
   )
 
   transition_stage = Stage(

@@ -1,2 +1,0 @@
-﻿user_id,map,algorithm,total_reward,successful_deliveries,success,success_rate,completed,nsteps,nepisodes,mean_qualitative_rating,collisions,collision_status
-2543223481,counter_circuit,coord_fcp,0.0,0.0,False,0.0,True,231,2,,,not_recorded

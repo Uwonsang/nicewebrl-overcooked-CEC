@@ -12,14 +12,62 @@ import sys
 
 logger = get_logger(__name__)
 
-experiment_name = sys.argv[1]
-if experiment_name == "coord_ring":
-  experiment_file = "coord_ring_experiment.py"
-elif experiment_name == "counter_circuit":
-  experiment_file = "counter_circuit_experiment.py"
-else:
-  print("Invalid experiment name")
+# -----------------------------------------------------------------------------
+# Experiment selection
+# Comment out or add entries here to choose layouts and algorithm partners.
+# Running ``python web_app.py`` uses every entry listed below.
+# -----------------------------------------------------------------------------
+LAYOUTS_TO_TEST = [
+  # The original paper assigned one layout per participant. Keeping both here
+  # runs every layout-algorithm combination in one session, as configured.
+  "counter_circuit",
+  "coord_ring",
+]
+
+ALGORITHMS_TO_TEST = [
+  # For the paper's full seven-condition comparison, enable every entry below.
+  # The current shorter selection is preserved so test length does not change
+  # unexpectedly; comment/uncomment entries as needed.
+  "ik",
+  # "ik_finetune",
+  # "sk",
+  "sk_e3t",
+  "sk_fcp",
+  # Optional cross-layout baselines. These use SK/FCP checkpoints trained on
+  # the other layout and are named coord_* or counter_* in saved records.
+  # "cross_sk",
+  # "cross_fcp",
+]
+
+LAYOUT_FILES = {
+  "counter_circuit": "counter_circuit_experiment.py",
+  "coord_ring": "coord_ring_experiment.py",
+}
+
+selected_layouts = list(LAYOUTS_TO_TEST)
+invalid_layouts = [name for name in selected_layouts if name not in LAYOUT_FILES]
+if invalid_layouts:
+  print(f"Invalid experiment layout(s): {', '.join(invalid_layouts)}")
+  print(f"Available layouts: {', '.join(LAYOUT_FILES)}")
   sys.exit(1)
+if not selected_layouts:
+  print("At least one layout must be selected")
+  sys.exit(1)
+if not ALGORITHMS_TO_TEST:
+  print("At least one algorithm must be selected")
+  sys.exit(1)
+
+os.environ["NICEWEBRL_LAYOUTS"] = ",".join(selected_layouts)
+os.environ["NICEWEBRL_ALGORITHMS"] = ",".join(ALGORITHMS_TO_TEST)
+
+experiment_name = (
+  selected_layouts[0] if len(selected_layouts) == 1 else "combined"
+)
+experiment_file = (
+  LAYOUT_FILES[selected_layouts[0]]
+  if len(selected_layouts) == 1
+  else "combined_experiment.py"
+)
 
 NAME = os.environ.get("NAME", experiment_name)
 DEBUG = int(os.environ.get("DEBUG", 0))
@@ -33,29 +81,32 @@ def download_models_if_needed():
 
   if os.path.exists(models_dir):
     return
-
-  print("Models directory not found. Downloading models.zip...")
-
-  # Download the file
-  dropbox_url = "https://www.dropbox.com/scl/fi/a5bazgpl4hpsnz2pwmqae/models.zip?rlkey=n8fl1a4xebqc45cf97uv019oq&dl=1"
-
-  response = requests.get(dropbox_url, stream=True)
-  if response.status_code == 200:
-    with open(models_zip, 'wb') as f:
-      for chunk in response.iter_content(chunk_size=8192):
-        f.write(chunk)
-    print("Downloaded models.zip successfully")
   else:
-    raise Exception(
-        f"Failed to download models.zip: HTTP {response.status_code}")
+    print("model directory not found. end this session")
+    sys.exit(1)
 
-  # Extract the zip file
-  with zipfile.ZipFile(models_zip, 'r') as zip_ref:
-    zip_ref.extractall('.')
+  # print("Models directory not found. Downloading models.zip...")
 
-  # Clean up the zip file
-  os.remove(models_zip)
-  print("Extracted models.zip and cleaned up")
+  # # Download the file
+  # dropbox_url = "https://www.dropbox.com/scl/fi/a5bazgpl4hpsnz2pwmqae/models.zip?rlkey=n8fl1a4xebqc45cf97uv019oq&dl=1"
+
+  # response = requests.get(dropbox_url, stream=True)
+  # if response.status_code == 200:
+  #   with open(models_zip, 'wb') as f:
+  #     for chunk in response.iter_content(chunk_size=8192):
+  #       f.write(chunk)
+  #   print("Downloaded models.zip successfully")
+  # else:
+  #   raise Exception(
+  #       f"Failed to download models.zip: HTTP {response.status_code}")
+
+  # # Extract the zip file
+  # with zipfile.ZipFile(models_zip, 'r') as zip_ref:
+  #   zip_ref.extractall('.')
+
+  # # Clean up the zip file
+  # os.remove(models_zip)
+  # print("Extracted models.zip and cleaned up")
 
 download_models_if_needed()
 

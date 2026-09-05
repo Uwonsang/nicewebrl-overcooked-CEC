@@ -9,6 +9,7 @@ dependencies = [
     "jaxmarl @ git+https://github.com/Uwonsang/crossenv_ued.git",
     "aiohttp",
     "requests",
+    "scipy",
 ]
 
 [project.optional-dependencies]

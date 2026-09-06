@@ -295,9 +295,6 @@ async def user_survey_display_fn(stage, container):
   with container.style("align-items: center;"):
     ui.markdown("## 사용자 설문")
 
-    ui.markdown("아래에 ID를 입력해 주세요.")
-    prolific_id = ui.input(placeholder="ID")
-
     ui.markdown("방금 AI 에이전트와 플레이한 경험을 바탕으로 답해 주세요.")
 
     questions = [
@@ -310,20 +307,17 @@ async def user_survey_display_fn(stage, container):
       ("Overall, I felt that the agent's ability to coordinate with me was:", "전반적으로 AI 에이전트가 나와 협력하는 능력은 어떠했습니까?"),
     ]
 
-    responses = {"prolific_id": prolific_id}
+    responses = {}
     completed = {}
     completed_all = asyncio.Event()
 
     def create_on_change(q_idx):
       def on_change(val):
         completed[q_idx] = True
-        if len(completed) == len(questions):  # +1 for prolific_id
+        if len(completed) == len(questions):
           completed_all.set()
 
       return on_change
-
-    # # Add prolific ID completion check
-    # prolific_id.on_change(create_on_change('prolific'))
 
     for i, (question_key, question_text) in enumerate(questions):
       ui.markdown(question_text)
@@ -522,6 +516,7 @@ instruction_block = Block(
   ],
   metadata=dict(desc="Instructions"),
   randomize=False,
+  name="counter_circuit_instructions",
 )
 all_blocks.append(instruction_block)
 
@@ -574,6 +569,7 @@ for model_name, model in model_dict.items():
     ],
     metadata=dict(desc=f"{model_name} Environment"),
     randomize=False,
+    name=f"counter_circuit_{model_name}_block",
   )
   all_blocks.append(env_block)
 

@@ -2,6 +2,7 @@ import aiofiles
 import os.path
 import asyncio
 import importlib
+import json
 from datetime import datetime
 from nicegui import app, ui
 import zipfile
@@ -27,34 +28,120 @@ logger = get_logger(__name__)
 # Running ``python web_app.py`` uses every entry listed below.
 # -----------------------------------------------------------------------------
 LAYOUTS_TO_TEST = [
-  # The original paper assigned one layout per participant. Keeping both here
-  # runs every layout-algorithm combination in one session, as configured.
+  # Every listed layout is paired with every listed algorithm.
   "counter_circuit",
   "coord_ring",
+  "asymm_advantages",
+  "forced_coord",
+  "cramped_room",
 ]
 
 ALGORITHMS_TO_TEST = [
-  # For the paper's full seven-condition comparison, enable every entry below.
-  # The current shorter selection is preserved so test length does not change
-  # unexpectedly; comment/uncomment entries as needed.
-  "ik",
-  # "ik_finetune",
-  # "sk",
-  "sk_e3t",
-  "sk_fcp",
-  # Optional cross-layout baselines. These use SK/FCP checkpoints trained on
-  # the other layout and are named coord_* or counter_* in saved records.
-  # "cross_sk",
-  # "cross_fcp",
+  # Map-specific baselines
+  "ippo",
+  "e3t",
+
+  # CEC trained across all layouts
+  # "cec_32",
+  # "cec_64",  # Only seed4 and seed5 are currently present.
+  # "cec_128",
+  "cec_256",
+
+  # CEC followed by map-specific fine-tuning
+  "cec_finetune",
+
+  # CEC with the IDAAC architecture
+  # "cec_idaac_32",
+  # "cec_idaac_64",  # seed5 is currently missing.
+  # "cec_idaac_128",
+  "cec_idaac_256",
+
+  # CEC-IDAAC followed by map-specific fine-tuning
+  "cec_idaac_finetune",
+
+  # FCP is not listed because models/IPPO/*/fcp_pool contains training
+  # partners, not a trained FCP policy checkpoint.
 ]
+
+# ``{layout}`` is replaced with names such as ``counter_circuit_9``.
+# Keep each glob narrow so final models are not mixed with resume checkpoints.
+ALGORITHM_SPECS = {
+  "ippo": {
+    "path": "models/IPPO/{layout}",
+    "glob": "seed*/seed*_best.pkl",
+    "network": "rnn",
+  },
+  "e3t": {
+    "path": "models/E3T/{layout}",
+    "glob": "seed*/seed*_best_e3t.pkl",
+    "network": "e3t",
+  },
+  "cec_32": {
+    "path": "models/CEC/32",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "rnn",
+  },
+  "cec_64": {
+    "path": "models/CEC/64",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "rnn",
+  },
+  "cec_128": {
+    "path": "models/CEC/128",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "rnn",
+  },
+  "cec_256": {
+    "path": "models/CEC/256",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "rnn",
+  },
+  "cec_finetune": {
+    "path": "models/CEC_Finetune/{layout}",
+    "glob": "seed*/seed*_ckpt0_improved_finetune_updates*.pkl",
+    "network": "rnn",
+  },
+  "cec_idaac_32": {
+    "path": "models/CEC_IDAAC/32",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "idaac",
+  },
+  "cec_idaac_64": {
+    "path": "models/CEC_IDAAC/64",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "idaac",
+  },
+  "cec_idaac_128": {
+    "path": "models/CEC_IDAAC/128",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "idaac",
+  },
+  "cec_idaac_256": {
+    "path": "models/CEC_IDAAC/256",
+    "glob": "seed*/seed*_ckpt0_improved_updates*.pkl",
+    "network": "idaac",
+  },
+  "cec_idaac_finetune": {
+    "path": "models/CEC_IDAAC_Finetune/{layout}",
+    "glob": "seed*/seed*_ckpt0_improved_finetune_updates*.pkl",
+    "network": "idaac",
+  },
+}
 
 LAYOUT_FILES = {
   "counter_circuit": "counter_circuit_experiment.py",
   "coord_ring": "coord_ring_experiment.py",
+  "asymm_advantages": "asymm_advantages_experiment.py",
+  "forced_coord": "forced_coord_experiment.py",
+  "cramped_room": "cramped_room_experiment.py",
 }
 
 selected_layouts = list(LAYOUTS_TO_TEST)
-invalid_layouts = [name for name in selected_layouts if name not in LAYOUT_FILES]
+invalid_layouts = []
+for layout_name in selected_layouts:
+  if layout_name not in LAYOUT_FILES:
+    invalid_layouts.append(layout_name)
+
 if invalid_layouts:
   print(f"Invalid experiment layout(s): {', '.join(invalid_layouts)}")
   print(f"Available layouts: {', '.join(LAYOUT_FILES)}")
@@ -62,27 +149,45 @@ if invalid_layouts:
 if not selected_layouts:
   print("At least one layout must be selected")
   sys.exit(1)
-if not ALGORITHMS_TO_TEST:
+selected_algorithms = list(ALGORITHMS_TO_TEST)
+
+if not selected_algorithms:
   print("At least one algorithm must be selected")
   sys.exit(1)
 
+unknown_algorithms = []
+for algorithm_name in selected_algorithms:
+  if algorithm_name not in ALGORITHM_SPECS:
+    unknown_algorithms.append(algorithm_name)
+
+if unknown_algorithms:
+  unknown_names = ", ".join(unknown_algorithms)
+  print(f"Missing algorithm configuration: {unknown_names}")
+  sys.exit(1)
+
 os.environ["NICEWEBRL_LAYOUTS"] = ",".join(selected_layouts)
-os.environ["NICEWEBRL_ALGORITHMS"] = ",".join(ALGORITHMS_TO_TEST)
+os.environ["NICEWEBRL_ALGORITHMS"] = ",".join(selected_algorithms)
+os.environ["NICEWEBRL_INCLUDE_TUTORIAL"] = "1"
+selected_algorithm_specs = {}
+for algorithm_name in selected_algorithms:
+  selected_algorithm_specs[algorithm_name] = ALGORITHM_SPECS[algorithm_name]
+
+serialized_algorithm_specs = json.dumps(selected_algorithm_specs)
+os.environ["NICEWEBRL_ALGORITHM_SPECS"] = serialized_algorithm_specs
 
 EXPERIMENT_CONFIG_ID = (
   "participant-session-v1|"
   f"layouts={','.join(selected_layouts)}|"
-  f"algorithms={','.join(ALGORITHMS_TO_TEST)}"
+  f"algorithms={','.join(selected_algorithms)}"
 )
 
-experiment_name = (
-  selected_layouts[0] if len(selected_layouts) == 1 else "combined"
-)
-experiment_file = (
-  LAYOUT_FILES[selected_layouts[0]]
-  if len(selected_layouts) == 1
-  else "combined_experiment.py"
-)
+if len(selected_layouts) == 1:
+  selected_layout = selected_layouts[0]
+  experiment_name = selected_layout
+  experiment_file = LAYOUT_FILES[selected_layout]
+else:
+  experiment_name = "combined"
+  experiment_file = "combined_experiment.py"
 
 NAME = os.environ.get("NAME", experiment_name)
 DEBUG = int(os.environ.get("DEBUG", 0))

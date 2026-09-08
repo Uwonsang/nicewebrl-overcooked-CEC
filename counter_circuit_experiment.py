@@ -30,7 +30,10 @@ from nicewebrl import (
   generate_stage_order,
 )
 from nicewebrl import get_logger
-from actor_networks import ActorCriticRNN, ScannedRNN, ActorCriticE3T
+from experiment_models import (
+  load_experiment_models,
+  load_tutorial_ippo_model,
+)
 from paper_metrics import PaperMetricsMultiAgentEnvStage as MultiAgentEnvStage
 import pdb
 import asyncio
@@ -43,6 +46,7 @@ DEBUG = int(os.environ.get("DEBUG", 0))
 WORLD_SEED = int(os.environ.get("WORLD_SEED", 1))
 NAME = os.environ.get("NAME", "counter_circuit")
 DATA_DIR = os.environ.get("DATA_DIR", "data")
+INCLUDE_TUTORIAL = os.environ.get("NICEWEBRL_INCLUDE_TUTORIAL", "1") == "1"
 
 MAX_STAGE_EPISODES = 1
 MAX_EPISODE_TIMESTEPS = 201
@@ -163,7 +167,10 @@ tutorial_config["ENV_KWARGS"]["layout"] = "asymm_advantages_9"
 # Define Overcooked environment
 ########################################
 jax_env = initialize_environment(base_config)
-jax_env_tutorial = initialize_environment(tutorial_config)
+if INCLUDE_TUTORIAL:
+  jax_env_tutorial = initialize_environment(tutorial_config)
+else:
+  jax_env_tutorial = None
 
 
 default_params = {"random_reset_fn": 0}
@@ -171,93 +178,64 @@ default_params = {"random_reset_fn": 0}
 ########################################
 # Load agent models
 ########################################
-base_agent_model = ActorCriticRNN(action_dim=len(actions), config=base_config)
-e3t_agent_model = ActorCriticE3T(action_dim=len(actions), config=base_config)
-
-available_model_dict = {
-  "ik": base_agent_model,
-  "ik_finetune": base_agent_model,
-  "sk": base_agent_model,
-  "sk_e3t": e3t_agent_model,
-  "sk_fcp": base_agent_model,
-  "coord_sk": base_agent_model,
-  "coord_fcp": base_agent_model,
-}
-requested_algorithms = os.environ.get(
-  "NICEWEBRL_ALGORITHMS", ",".join(available_model_dict)
-).split(",")
-algorithm_aliases = {"cross_sk": "coord_sk", "cross_fcp": "coord_fcp"}
-requested_algorithms = [
-  algorithm_aliases.get(name.strip(), name.strip())
-  for name in requested_algorithms
-  if name.strip()
-]
-unknown_algorithms = [
-  name for name in requested_algorithms if name not in available_model_dict
-]
-if unknown_algorithms:
-  raise ValueError(
-    f"Algorithms unavailable for counter_circuit: {unknown_algorithms}"
-  )
-model_dict = {
-  name: available_model_dict[name] for name in requested_algorithms
-}
-models_to_load = dict(model_dict)
-models_to_load.setdefault("ik", available_model_dict["ik"])
-param_dict = {name: [] for name in models_to_load}
-num_seed_dict = {name: 0 for name in models_to_load}
-checkpoint_name_dict = {name: [] for name in models_to_load}
-
-for model_name in models_to_load:
-  if "coord" in model_name:
-    continue
-  model_dir = f"models/{model_name}/counter_circuit/"
-  # load all files in model_dir
-  files = sorted(os.listdir(model_dir))
-  for file in files:
-    with open(os.path.join(model_dir, file), "rb") as f:
-      params = pickle.load(f)["params"]
-      param_dict[model_name].append(params)
-      num_seed_dict[model_name] += 1
-      checkpoint_name_dict[model_name].append(os.path.join(model_dir, file))
-  param_dict[model_name] = jax.tree_map(
-    lambda *x: jnp.stack(x), *param_dict[model_name]
-  )
-
-for model_name in ["sk", "sk_fcp"]:  # optionally add coord ring models
-  model_dir = f"models/{model_name}/coord_ring/"
-  dict_name = "coord_sk" if model_name == "sk" else "coord_fcp"
-  if dict_name not in model_dict:
-    continue
-  # load all files in model_dir
-  files = sorted(os.listdir(model_dir))
-  for file in files:
-    with open(os.path.join(model_dir, file), "rb") as f:
-      params = pickle.load(f)["params"]
-      param_dict[dict_name].append(params)
-      num_seed_dict[dict_name] += 1
-      checkpoint_name_dict[dict_name].append(os.path.join(model_dir, file))
-  param_dict[dict_name] = jax.tree_map(lambda *x: jnp.stack(x), *param_dict[dict_name])
-init_hidden_state_fn = lambda: ScannedRNN.initialize_carry(
-  1, base_config["GRU_HIDDEN_DIM"]
+(
+  model_dict,
+  param_dict,
+  num_seed_dict,
+  checkpoint_name_dict,
+  init_hidden_state_fn_dict,
+) = load_experiment_models(
+  base_config,
+  action_dim=len(actions),
 )
+
+if INCLUDE_TUTORIAL:
+  (
+    tutorial_model,
+    tutorial_model_params,
+    tutorial_num_seeds,
+    tutorial_checkpoint_names,
+    tutorial_init_hidden_state_fn,
+  ) = load_tutorial_ippo_model(
+    tutorial_config,
+    action_dim=len(actions),
+  )
+else:
+  tutorial_model = None
+  tutorial_model_params = None
+  tutorial_num_seeds = 0
+  tutorial_checkpoint_names = []
+  tutorial_init_hidden_state_fn = None
 
 # NiceWebRL exploits a `TimeStep` object for checking episode conditions
 # wrap environment in wrapper if needed
 jax_env = TimestepWrapper(
   jax_env, autoreset=True, reset_w_batch_dim=False, use_params=False
 )
-jax_env_tutorial = TimestepWrapper(
-  jax_env_tutorial, autoreset=True, reset_w_batch_dim=False, use_params=False
-)
+if INCLUDE_TUTORIAL:
+  jax_env_tutorial = TimestepWrapper(
+    jax_env_tutorial,
+    autoreset=True,
+    reset_w_batch_dim=False,
+    use_params=False,
+  )
+else:
+  jax_env_tutorial = jax_env
 
 # create web environment wrapper
 jax_web_env = MultiAgentJaxWebEnv(env=jax_env, actions=action_array)
-jax_web_env_tutorial = MultiAgentJaxWebEnv(env=jax_env_tutorial, actions=action_array)
+if INCLUDE_TUTORIAL:
+  jax_web_env_tutorial = MultiAgentJaxWebEnv(
+    env=jax_env_tutorial,
+    actions=action_array,
+  )
+else:
+  jax_web_env_tutorial = jax_web_env
 
 # Call this function to pre-compile jax functions before experiment starts.
 jax_web_env.precompile(dummy_env_params=default_params)
-jax_web_env_tutorial.precompile(dummy_env_params=default_params)
+if INCLUDE_TUTORIAL:
+  jax_web_env_tutorial.precompile(dummy_env_params=default_params)
 
 
 # Define rendering function
@@ -273,9 +251,13 @@ def render_fn_tutorial(timestep: nicewebrl.Timestep):
 
 # precompile vmapped render fn that will vmap over all actions
 vmap_render_fn = jax_web_env.precompile_vmap_render_fn(render_fn, default_params)
-vmap_render_fn_tutorial = jax_web_env_tutorial.precompile_vmap_render_fn(
-  render_fn_tutorial, default_params
-)
+if INCLUDE_TUTORIAL:
+  vmap_render_fn_tutorial = jax_web_env_tutorial.precompile_vmap_render_fn(
+    render_fn_tutorial,
+    default_params,
+  )
+else:
+  vmap_render_fn_tutorial = vmap_render_fn
 
 # compile it so fast
 render_fn = (
@@ -283,11 +265,14 @@ render_fn = (
   .lower(jax_web_env.reset(jax.random.PRNGKey(0), default_params))
   .compile()
 )
-render_fn_tutorial = (
-  jax.jit(render_fn_tutorial)
-  .lower(jax_web_env_tutorial.reset(jax.random.PRNGKey(0), default_params))
-  .compile()
-)
+if INCLUDE_TUTORIAL:
+  render_fn_tutorial = (
+    jax.jit(render_fn_tutorial)
+    .lower(jax_web_env_tutorial.reset(jax.random.PRNGKey(0), default_params))
+    .compile()
+  )
+else:
+  render_fn_tutorial = render_fn
 
 
 async def user_survey_display_fn(stage, container):
@@ -491,15 +476,15 @@ tutorial_env_stage = MultiAgentEnvStage(
     key1="value1",
     key2="value2",
   ),
-  model=base_agent_model,  # temporarily have other agent stay in place
-  model_params=param_dict["ik"],
-  num_seeds=num_seed_dict["ik"],
-  using_param_stack=True,
-  init_hidden_state_fn=init_hidden_state_fn,
+  model=tutorial_model,
+  model_params=tutorial_model_params,
+  num_seeds=tutorial_num_seeds,
+  using_param_stack=INCLUDE_TUTORIAL,
+  init_hidden_state_fn=tutorial_init_hidden_state_fn,
   max_timesteps=MAX_EPISODE_TIMESTEPS,
   human_id=None,  # will randomly shuffle human id
   action_values=action_array,
-  checkpoint_names=checkpoint_name_dict["ik"],
+  checkpoint_names=tutorial_checkpoint_names,
 )
 
 post_tutorial_stage = Stage(name="본 실험 안내", display_fn=post_tutorial_display_fn)
@@ -548,7 +533,7 @@ for model_name, model in model_dict.items():
     model_params=param_dict[model_name],
     num_seeds=num_seed_dict[model_name],
     using_param_stack=True,
-    init_hidden_state_fn=init_hidden_state_fn,
+    init_hidden_state_fn=init_hidden_state_fn_dict[model_name],
     max_timesteps=MAX_EPISODE_TIMESTEPS,
     human_id=None,  # will randomly shuffle human id
     action_values=action_array,

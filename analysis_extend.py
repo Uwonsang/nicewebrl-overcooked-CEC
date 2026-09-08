@@ -53,6 +53,15 @@ SURVEY_LABELS = {
   SURVEY_QUESTIONS[5]: "Enjoyed",
   SURVEY_QUESTIONS[6]: "Coordination",
 }
+SURVEY_CSV_FIELDS = {
+  SURVEY_QUESTIONS[0]: "survey_adaptive",
+  SURVEY_QUESTIONS[1]: "survey_consistent",
+  SURVEY_QUESTIONS[2]: "survey_human_like",
+  SURVEY_QUESTIONS[3]: "survey_in_my_way",
+  SURVEY_QUESTIONS[4]: "survey_frustrating",
+  SURVEY_QUESTIONS[5]: "survey_enjoyed",
+  SURVEY_QUESTIONS[6]: "survey_coordination",
+}
 RATING_VALUES = {
   "Strongly disagree": 1,
   "Disagree": 2,
@@ -152,6 +161,9 @@ def algorithm_from_survey(stage_name: str, map_name: str) -> str | None:
   labels = {
     "counter_circuit": "Counter Circuit",
     "coord_ring": "Coord Ring",
+    "asymm_advantages": "Asymmetric Advantages",
+    "forced_coord": "Forced Coordination",
+    "cramped_room": "Cramped Room",
   }
   label = labels.get(map_name, map_name.replace("_", " ").title())
   marker = f" {label} "
@@ -238,6 +250,13 @@ def analyze_user_file(path: Path) -> tuple[str, str, dict[str, Any]] | None:
 
   for algorithm, items in sorted(env_records.items()):
     total_reward = sum(timestep_reward(item) for item in items)
+    started_at_values = []
+    for item in items:
+      item_data = item.get("data", {})
+      started_at = item_data.get("image_seen_time")
+      if started_at:
+        started_at_values.append(str(started_at))
+
     latest_metadata = max(
       (item.get("metadata", {}) for item in items),
       key=lambda metadata: int(metadata.get("nsteps", 0)),
@@ -274,7 +293,9 @@ def analyze_user_file(path: Path) -> tuple[str, str, dict[str, Any]] | None:
       for item in items
     )
     plays[algorithm] = {
+      "started_at": min(started_at_values) if started_at_values else None,
       "total_reward": round(total_reward, 4),
+      "recipes_made": round(successful_deliveries, 4),
       "successful_deliveries": round(successful_deliveries, 4),
       "success": total_reward > 0,
       "success_rate": 1.0 if total_reward > 0 else 0.0,
@@ -440,10 +461,13 @@ def write_json(path: Path, data: Any) -> None:
 
 def write_summary_csv(path: Path, rows: list[dict[str, Any]]) -> None:
   fieldnames = [
+    "play_order",
     "user_id",
+    "started_at",
     "map",
     "algorithm",
     "total_reward",
+    "recipes_made",
     "successful_deliveries",
     "success",
     "success_rate",
@@ -457,6 +481,7 @@ def write_summary_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     "model_indices",
     "model_checkpoints",
     "human_ids",
+    *SURVEY_CSV_FIELDS.values(),
   ]
   with path.open("w", newline="", encoding="utf-8-sig") as stream:
     writer = csv.DictWriter(stream, fieldnames=fieldnames, extrasaction="ignore")
@@ -830,10 +855,16 @@ def main() -> None:
   args = parser.parse_args()
 
   timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-  per_user_dir = args.output_dir / "result_per_user"
-  per_map_dir = args.output_dir / "result_per_map"
-  per_algorithm_dir = args.output_dir / "result_per_algorithm"
-  for directory in (per_user_dir, per_map_dir, per_algorithm_dir):
+  run_output_dir = args.output_dir / timestamp
+  per_user_dir = run_output_dir / "result_per_user"
+  per_map_dir = run_output_dir / "result_per_map"
+  per_algorithm_dir = run_output_dir / "result_per_algorithm"
+  for directory in (
+    run_output_dir,
+    per_user_dir,
+    per_map_dir,
+    per_algorithm_dir,
+  ):
     directory.mkdir(parents=True, exist_ok=True)
 
   users: dict[str, dict[str, Any]] = defaultdict(
@@ -857,6 +888,8 @@ def main() -> None:
     users[user_id]["demographics"].update(result["demographics"])
     users[user_id]["maps"][map_name] = result
     for algorithm, run in result["algorithms"].items():
+      survey = run.get("survey") or {}
+      survey_responses = survey.get("responses", {})
       row = {
         "user_id": user_id,
         "map": map_name,
@@ -867,6 +900,8 @@ def main() -> None:
           "paper_mean_rating"
         ),
       }
+      for question, field_name in SURVEY_CSV_FIELDS.items():
+        row[field_name] = survey_responses.get(question)
       rows.append(row)
       map_runs[map_name].append(run)
       algorithm_runs[algorithm].append(run)
@@ -875,6 +910,18 @@ def main() -> None:
 
   for user_id, result in sorted(users.items()):
     user_rows = [row for row in rows if row["user_id"] == user_id]
+    user_rows.sort(
+      key=lambda row: (
+        row.get("started_at") is None,
+        row.get("started_at") or "",
+        row["map"],
+        row["algorithm"],
+      )
+    )
+    for play_order, row in enumerate(user_rows, start=1):
+      row["play_order"] = play_order
+
+    result["play_sequence"] = user_rows
     write_json(per_user_dir / f"user_{user_id}_{timestamp}.json", result)
     write_summary_csv(per_user_dir / f"user_{user_id}_{timestamp}.csv", user_rows)
     plot_user(per_user_dir / f"user_{user_id}_{timestamp}.png", user_id, user_rows)
@@ -946,15 +993,15 @@ def main() -> None:
   all_runs = [run for runs in map_runs.values() for run in runs]
   correlation_result = survey_correlation(all_runs)
   write_json(
-    args.output_dir / f"Survey_correlation_{timestamp}.json",
+    run_output_dir / "Survey_correlation.json",
     correlation_result,
   )
   plot_survey_correlation(
-    args.output_dir / f"Survey_correlation_{timestamp}.png",
+    run_output_dir / "Survey_correlation.png",
     correlation_result,
   )
   plot_survey_questions(
-    args.output_dir / f"Survey_ratings_{timestamp}.png",
+    run_output_dir / "Survey_ratings.png",
     "Survey ratings across all selected layouts",
     {
       algorithm: aggregate_runs(runs)
@@ -962,7 +1009,7 @@ def main() -> None:
     },
   )
   write_statistical_tests(
-    args.output_dir / f"Statistical_tests_{timestamp}.csv",
+    run_output_dir / "Statistical_tests.csv",
     statistical_tests,
   )
 
@@ -988,16 +1035,16 @@ def main() -> None:
     "survey_correlation": correlation_result,
     "pairwise_statistical_tests": statistical_tests,
   }
-  write_json(args.output_dir / f"Total_result_{timestamp}.json", total_result)
-  write_summary_csv(args.output_dir / f"Total_result_{timestamp}.csv", rows)
+  write_json(run_output_dir / "Total_result.json", total_result)
+  write_summary_csv(run_output_dir / "Total_result.csv", rows)
   plot_total(
-    args.output_dir / f"Total_result_{timestamp}.png",
+    run_output_dir / "Total_result.png",
     map_results,
     algorithm_results,
   )
 
   print(f"분석 완료: {len(users)}명, {len(rows)}개 알고리즘-맵 실행")
-  print(f"결과 위치: {args.output_dir.resolve()}")
+  print(f"결과 위치: {run_output_dir.resolve()}")
 
 
 if __name__ == "__main__":

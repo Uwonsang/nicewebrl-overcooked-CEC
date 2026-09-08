@@ -2,12 +2,10 @@ from dotenv import load_dotenv
 from flax import struct
 import jax
 import jax.numpy as jnp
-import numpy as np
 import os
 import pickle
 
 from jaxmarl.viz.overcooked_jitted_visualizer import render_fn as overcooked_render_fn
-from jaxmarl.viz.overcooked_jitted_visualizer import overlay_score_text
 from jaxmarl.environments.overcooked import Overcooked, Actions, State
 from jaxmarl.environments.overcooked.layouts import overcooked_layouts
 from jaxmarl.environments.overcooked.layouts import (
@@ -46,7 +44,7 @@ logger = get_logger(__name__)
 VERBOSITY = int(os.environ.get("VERBOSITY", 0))
 DEBUG = int(os.environ.get("DEBUG", 0))
 WORLD_SEED = int(os.environ.get("WORLD_SEED", 1))
-NAME = os.environ.get("NAME", "coord_ring")
+NAME = os.environ.get("NAME", "asymm_advantages")
 DATA_DIR = os.environ.get("DATA_DIR", "data")
 INCLUDE_TUTORIAL = os.environ.get("NICEWEBRL_INCLUDE_TUTORIAL", "1") == "1"
 
@@ -157,7 +155,7 @@ base_config["ENV_KWARGS"]["check_held_out"] = False
 base_config["ENV_KWARGS"]["shuffle_inv_and_pot"] = False
 base_config["ENV_KWARGS"]["random_reset"] = False
 base_config["ENV_KWARGS"]["random_reset_fn"] = "reset_all"
-base_config["ENV_KWARGS"]["layout"] = "coord_ring_9"
+base_config["ENV_KWARGS"]["layout"] = "asymm_advantages_9"
 base_config["ENV_KWARGS"]["max_steps"] = MAX_EPISODE_TIMESTEPS - 1
 base_config["GRAPH_NET"] = True
 
@@ -173,6 +171,8 @@ if INCLUDE_TUTORIAL:
   jax_env_tutorial = initialize_environment(tutorial_config)
 else:
   jax_env_tutorial = None
+
+
 default_params = {"random_reset_fn": 0}
 
 ########################################
@@ -207,7 +207,6 @@ else:
   tutorial_checkpoint_names = []
   tutorial_init_hidden_state_fn = None
 
-
 # NiceWebRL exploits a `TimeStep` object for checking episode conditions
 # wrap environment in wrapper if needed
 jax_env = TimestepWrapper(
@@ -222,6 +221,7 @@ if INCLUDE_TUTORIAL:
   )
 else:
   jax_env_tutorial = jax_env
+
 # create web environment wrapper
 jax_web_env = MultiAgentJaxWebEnv(env=jax_env, actions=action_array)
 if INCLUDE_TUTORIAL:
@@ -409,8 +409,6 @@ async def env_stage_display_fn(
   stage: MultiAgentEnvStage, container: ui.element, timestep: nicewebrl.Timestep
 ):
   state_image = stage.render_fn(timestep)
-  score = stage.get_user_data("score", 0.0)
-  state_image = overlay_score_text(np.array(state_image), score)
   state_image = base64_npimage(state_image)
   stage_state = stage.get_user_data("stage_state")
   human_color = stage.get_user_data("human_color")
@@ -503,14 +501,15 @@ instruction_block = Block(
   ],
   metadata=dict(desc="Instructions"),
   randomize=False,
-  name="coord_ring_instructions",
+  name="asymm_advantages_instructions",
 )
 all_blocks.append(instruction_block)
 
 
+model_names = model_dict.keys()
 for model_name, model in model_dict.items():
   environment_stage = MultiAgentEnvStage(
-    name=f"{model_name}_coord_ring",
+    name=f"{model_name}_asymm_advantages",
     web_env=jax_web_env,
     action_keys=action_keys,
     action_to_name=action_to_name,
@@ -545,7 +544,7 @@ for model_name, model in model_dict.items():
     name="설문 완료",
     display_fn=transition_display_fn,
   )
-  survey_stage = make_survey_stage(f"{model_name} Coord Ring 설문")
+  survey_stage = make_survey_stage(f"{model_name} Asymmetric Advantages 설문")
 
   env_block = Block(
     stages=[
@@ -555,13 +554,12 @@ for model_name, model in model_dict.items():
     ],
     metadata=dict(desc=f"{model_name} Environment"),
     randomize=False,
-    name=f"coord_ring_{model_name}_block",
+    name=f"asymm_advantages_{model_name}_block",
   )
   all_blocks.append(env_block)
-
 
 experiment = nicewebrl.Experiment(
     blocks=all_blocks,
     randomize=[False] + [True] * (len(all_blocks) - 1),
-    name=f"coord_ring",
+    name="asymm_advantages",
 )

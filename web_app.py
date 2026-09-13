@@ -43,23 +43,24 @@ ALGORITHMS_TO_TEST = [
 
   # CEC trained across all layouts
   # "cec_32",
-  # "cec_64",  # Only seed4 and seed5 are currently present.
+  "cec_64",  # Only seed4 and seed5 are currently present.
   # "cec_128",
-  "cec_256",
+  # "cec_256",
 
   # CEC followed by map-specific fine-tuning
-  "cec_finetune",
+  # "cec_finetune",
 
   # CEC with the IDAAC architecture
-  # "cec_idaac_32",
+  "cec_idaac_32",
   # "cec_idaac_64",  # seed5 is currently missing.
   # "cec_idaac_128",
   "cec_idaac_256",
 
   # CEC-IDAAC followed by map-specific fine-tuning
-  "cec_idaac_finetune",
+  # "cec_idaac_finetune",
 
   # FCP is not listed because models/IPPO/*/fcp_pool contains training
+  "fcp"
   # partners, not a trained FCP policy checkpoint.
 ]
 
@@ -69,6 +70,11 @@ ALGORITHM_SPECS = {
   "ippo": {
     "path": "models/IPPO/{layout}",
     "glob": "seed*/seed*_best.pkl",
+    "network": "rnn",
+  },
+  "fcp": {
+    "path": "models/FCP/{layout}",
+    "glob": "seed*/fcp_seed*_best.pkl",
     "network": "rnn",
   },
   "e3t": {
@@ -176,7 +182,7 @@ serialized_algorithm_specs = json.dumps(selected_algorithm_specs)
 os.environ["NICEWEBRL_ALGORITHM_SPECS"] = serialized_algorithm_specs
 
 EXPERIMENT_CONFIG_ID = (
-  "participant-session-v1|"
+  "participant-session-v3|order=layout-fixed-algorithm-random|"
   f"layouts={','.join(selected_layouts)}|"
   f"algorithms={','.join(selected_algorithms)}"
 )

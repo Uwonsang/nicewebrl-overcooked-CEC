@@ -3,7 +3,10 @@
 import importlib
 import os
 
+import jax
+import jax.numpy as jnp
 import nicewebrl
+from nicewebrl.nicejax import new_rng
 
 
 LAYOUT_MODULES = {
@@ -27,6 +30,7 @@ for layout_name in selected_layout_names:
     selected_layouts.append(layout_name)
 
 all_blocks = []
+layout_block_groups = []
 for layout_index, layout_name in enumerate(selected_layouts):
   if layout_index == 0:
     os.environ["NICEWEBRL_INCLUDE_TUTORIAL"] = "1"
@@ -35,16 +39,52 @@ for layout_index, layout_name in enumerate(selected_layouts):
 
   module = importlib.import_module(LAYOUT_MODULES[layout_name])
   layout_blocks = module.all_blocks
+
   # Show the common instructions and tutorial once, before the first layout.
   if layout_index == 0:
-    all_blocks.extend(layout_blocks)
+    instruction_block = layout_blocks[0]
+    algorithm_blocks = layout_blocks[1:]
+    all_blocks.append(instruction_block)
   else:
-    all_blocks.extend(layout_blocks[1:])
+    algorithm_blocks = layout_blocks[1:]
 
-# The tutorial stays first. Every algorithm-layout pair is randomized after it,
-# while each game remains immediately followed by its survey.
-experiment = nicewebrl.Experiment(
+  group_start = len(all_blocks)
+  all_blocks.extend(algorithm_blocks)
+  group_end = len(all_blocks)
+  layout_block_groups.append(list(range(group_start, group_end)))
+
+
+class LayoutGroupedExperiment(nicewebrl.Experiment):
+  """Keep layouts fixed while randomizing algorithms inside each layout."""
+
+  async def get_block_order(self):
+    saved_order = self.get_user_data("block_order")
+    if saved_order is not None:
+      return saved_order
+
+    block_order = [0]
+    rng_key = new_rng()
+
+    for block_group in layout_block_groups:
+      rng_key, group_key = jax.random.split(rng_key)
+      group_indices = jnp.asarray(block_group)
+      shuffled_group = jax.random.permutation(group_key, group_indices)
+      block_order.extend(int(index) for index in shuffled_group)
+
+    await self.set_user_data(block_order=block_order)
+    return block_order
+
+# Keep every layout together. The layout order is fixed, while algorithms are
+# shuffled independently inside each layout:
+#
+#   first layout:  all selected algorithms in random order
+#   second layout: all selected algorithms in a new random order
+#   ...
+#
+# Each game remains immediately followed by its survey because both stages are
+# contained in one block.
+experiment = LayoutGroupedExperiment(
   blocks=all_blocks,
-  randomize=[False] + [True] * (len(all_blocks) - 1),
+  randomize=True,
   name="combined_" + "_".join(selected_layouts),
 )

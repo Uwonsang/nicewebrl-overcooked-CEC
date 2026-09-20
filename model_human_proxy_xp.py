@@ -572,6 +572,17 @@ def read_summary(path: Path) -> list[dict[str, Any]]:
     return list(csv.DictReader(stream))
 
 
+def infer_output_dir(model_root: Path, checkpoint_path: Path | None) -> Path:
+  """Place results beside ``models/`` regardless of its mount prefix."""
+  source_path = (checkpoint_path or model_root).resolve()
+  if source_path.is_file():
+    source_path = source_path.parent
+  for candidate in (source_path, *source_path.parents):
+    if candidate.name == "ICRL" and candidate.parent.name == "models":
+      return candidate.parent.parent / "proxy_data"
+  return DEFAULT_OUTPUT_DIR
+
+
 def build_parser() -> argparse.ArgumentParser:
   parser = argparse.ArgumentParser(
     description="Cross-play trained policies with map-specific BC human proxies."
@@ -586,7 +597,14 @@ def build_parser() -> argparse.ArgumentParser:
     ),
   )
   parser.add_argument("--human-proxy-root", type=Path, default=DEFAULT_PROXY_ROOT)
-  parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+  parser.add_argument(
+    "--output-dir",
+    type=Path,
+    help=(
+      "Result directory. By default it is inferred beside models/ as "
+      "<crossenv_ued>/proxy_data."
+    ),
+  )
   parser.add_argument(
     "--models",
     nargs="+",
@@ -621,6 +639,9 @@ def main() -> None:
     raise ValueError("--beta must be positive")
   if args.checkpoint_path is not None and len(args.models) != 1:
     raise ValueError("--checkpoint-path requires exactly one --models value")
+
+  if args.output_dir is None:
+    args.output_dir = infer_output_dir(args.model_root, args.checkpoint_path)
 
   args.output_dir.mkdir(parents=True, exist_ok=True)
   base_config = yaml.safe_load(Path("overcooked_config.yaml").read_text())

@@ -9,7 +9,7 @@ set -euo pipefail
 #   EPISODES=5 ALGORITHMS="ippo cec_64" ./run_model_human_proxy_xp.sh
 MODEL_ROOT="${MODEL_ROOT:-/mnt/nas/wonsang/crossenv_ued/models/ICRL}"
 HUMAN_PROXY_ROOT="${HUMAN_PROXY_ROOT:-human_proxy/checkpoints}"
-OUTPUT_DIR="${OUTPUT_DIR:-data/xp_human_proxy}"
+OUTPUT_DIR="${OUTPUT_DIR:-}"
 EPISODES="${EPISODES:-1}"
 MAX_TIMESTEPS="${MAX_TIMESTEPS:-200}"
 WORLD_SEED="${WORLD_SEED:-1}"
@@ -26,6 +26,20 @@ if [[ $# -ge 1 && "${1}" != -* ]]; then
 else
   ALGORITHMS_TEXT="${ALGORITHMS:-ippo e3t fcp cec_64 cec_idaac_32 cec_idaac_256}"
 fi
+
+if [[ -z "${OUTPUT_DIR}" ]]; then
+  output_source="${CHECKPOINT_PATH:-${MODEL_ROOT}}"
+  case "${output_source}" in
+    */models/ICRL|*/models/ICRL/*)
+      crossenv_root="${output_source%%/models/ICRL*}"
+      OUTPUT_DIR="${crossenv_root}/proxy_data"
+      ;;
+    *)
+      OUTPUT_DIR="data/xp_human_proxy"
+      ;;
+  esac
+fi
+
 LAYOUTS_TEXT="${LAYOUTS:-counter_circuit coord_ring asymm_advantages forced_coord cramped_room}"
 
 read -r -a ALGORITHM_LIST <<< "${ALGORITHMS_TEXT}"

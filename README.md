@@ -57,11 +57,14 @@ uv run python model_human_proxy_xp.py
 IPPO seed 4 is excluded; IPPO therefore uses seeds 0, 1, 2, 3, 5, and 6.
 
 The default trained-model root is
-`/mnt/nas/wonsang/crossenv_ued/models/ICRL`. Each rollout is stored under
-`data/xp_human_proxy/` as the same length-prefixed MessagePack
-`EnvStage` records used by the browser experiment. The BC action occupies the
-human-action fields; reaction times and demographics are null. A compact
-`summary.csv` and a run `manifest.json` are also written.
+`/mnt/nas/wonsang/crossenv_ued/models/ICRL`. By default, the output path is
+inferred beside `models/`, so that root writes to
+`/mnt/nas/wonsang/crossenv_ued/proxy_data/`. A root mounted at
+`/app/nas/wonsang/crossenv_ued/models/ICRL` instead writes to
+`/app/nas/wonsang/crossenv_ued/proxy_data/`. Each rollout uses the same
+length-prefixed MessagePack `EnvStage` records as the browser experiment. The
+BC action occupies the human-action fields; reaction times and demographics
+are null. A compact `summary.csv` and a run `manifest.json` are also written.
 
 For a small deterministic check before a full sweep:
 
@@ -80,7 +83,7 @@ The generated records can be passed directly to the existing analysis:
 
 ```bash
 uv run python analysis_extend.py \
-  --data-dir data/xp_human_proxy \
+  --data-dir /mnt/nas/wonsang/crossenv_ued/proxy_data \
   --output-dir analysis/xp_human_proxy
 ```
 

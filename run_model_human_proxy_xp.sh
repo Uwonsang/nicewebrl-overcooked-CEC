@@ -10,6 +10,7 @@ set -euo pipefail
 MODEL_ROOT="${MODEL_ROOT:-/mnt/nas/wonsang/crossenv_ued/models/ICRL}"
 HUMAN_PROXY_ROOT="${HUMAN_PROXY_ROOT:-human_proxy/checkpoints}"
 OUTPUT_DIR="${OUTPUT_DIR:-}"
+PYTHON_BIN="${PYTHON_BIN:-python}"
 EPISODES="${EPISODES:-1}"
 MAX_TIMESTEPS="${MAX_TIMESTEPS:-200}"
 WORLD_SEED="${WORLD_SEED:-1}"
@@ -55,7 +56,7 @@ for algorithm in "${ALGORITHM_LIST[@]}"; do
     echo "[$(date --iso-8601=seconds)] starting ${run_name}" | tee -a "${log_path}"
 
     command=(
-      uv run --no-sync python model_human_proxy_xp.py
+      "${PYTHON_BIN}" model_human_proxy_xp.py
       --model-root "${MODEL_ROOT}"
       --human-proxy-root "${HUMAN_PROXY_ROOT}"
       --output-dir "${OUTPUT_DIR}"

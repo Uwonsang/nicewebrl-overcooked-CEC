@@ -102,9 +102,9 @@ script finds the appropriate algorithm and layout directories automatically:
   ippo /mnt/nas/wonsang/crossenv_ued/models/ICRL
 ```
 
-The script uses `uv run --no-sync`, so it does not reinstall packages between
-algorithm-layout runs. Run `uv sync --python 3.12` once beforehand when setting
-up a new environment.
+The script invokes `python` directly and therefore does not install or update
+packages. Activate the project environment first, or select its interpreter
+without activation via `PYTHON_BIN=.venv/bin/python`.
 
 The same ICRL root works for shared CEC checkpoints:
 

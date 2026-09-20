@@ -45,6 +45,87 @@ New experiment runs explicitly record the selected model checkpoint, human and
 AI actions, delivery events, agent positions, and movement collisions. A
 collision means that the agents tried to enter the same cell or swap places.
 
+## Model x Human-proxy Cross-play
+
+Run the six requested trained-policy families against every map-specific BC
+human-proxy seed, in both agent seats:
+
+```bash
+uv run python model_human_proxy_xp.py
+```
+
+IPPO seed 4 is excluded; IPPO therefore uses seeds 0, 1, 2, 3, 5, and 6.
+
+The default trained-model root is
+`/mnt/nas/wonsang/crossenv_ued/models/ICRL`. Each rollout is stored under
+`data/xp_human_proxy/` as the same length-prefixed MessagePack
+`EnvStage` records used by the browser experiment. The BC action occupies the
+human-action fields; reaction times and demographics are null. A compact
+`summary.csv` and a run `manifest.json` are also written.
+
+For a small deterministic check before a full sweep:
+
+```bash
+uv run python model_human_proxy_xp.py \
+  --models ippo --layouts coord_ring \
+  --model-seeds 0 --human-proxy-seeds 0 \
+  --episodes 1 --max-timesteps 10
+```
+
+Existing rollout files are skipped so interrupted sweeps can be resumed. Pass
+`--overwrite` to regenerate them. Use `--episodes N` for repeated stochastic
+rollouts per model/proxy/seat pair.
+
+The generated records can be passed directly to the existing analysis:
+
+```bash
+uv run python analysis_extend.py \
+  --data-dir data/xp_human_proxy \
+  --output-dir analysis/xp_human_proxy
+```
+
+To run one algorithm-layout pair at a time in separate processes, use the
+provided sweep script:
+
+```bash
+./run_model_human_proxy_xp.sh
+```
+
+Alternatively, pass one algorithm name and the common ICRL model root. The
+script finds the appropriate algorithm and layout directories automatically:
+
+```bash
+./run_model_human_proxy_xp.sh \
+  ippo /mnt/nas/wonsang/crossenv_ued/models/ICRL
+```
+
+The script uses `uv run --no-sync`, so it does not reinstall packages between
+algorithm-layout runs. Run `uv sync --python 3.12` once beforehand when setting
+up a new environment.
+
+The same ICRL root works for shared CEC checkpoints:
+
+```bash
+./run_model_human_proxy_xp.sh \
+  cec_64 /mnt/nas/wonsang/crossenv_ued/models/ICRL
+```
+
+The second argument can alternatively be an algorithm directory, one layout
+directory, a shared CEC seed-directory root, or one `.pkl` file. When using a
+layout directory or file with a map-specific model, select the matching layout
+via the `LAYOUTS` environment variable.
+
+The sweep can be restricted or redirected with environment variables. Extra
+arguments are forwarded to `model_human_proxy_xp.py`:
+
+```bash
+ALGORITHMS="ippo cec_64" \
+LAYOUTS="coord_ring cramped_room" \
+EPISODES=1 \
+OUTPUT_DIR=data/xp_subset \
+./run_model_human_proxy_xp.sh --model-seeds 0 1 --human-proxy-seeds 0 1
+```
+
 ## Deploying online with fly.io
 
 **Prerequisites**: Install the [fly CLI](https://fly.io/docs/hands-on/install-flyctl/)

@@ -1,0 +1,67 @@
+{
+  "snapshot_dir": "/app/nas/models/ICRL/CEC/256/seed0/seed0_mid_ckpts/critic_loss_surface",
+  "snapshots": [
+    {
+      "path": "/app/nas/models/ICRL/CEC/256/seed0/seed0_mid_ckpts/critic_loss_surface/early_update4578.pkl",
+      "label": "early",
+      "update_step": 4578,
+      "center_loss_by_case": {
+        "encoder_rnn": 9.994237899780273,
+        "critic_mlp": 9.994237899780273
+      }
+    },
+    {
+      "path": "/app/nas/models/ICRL/CEC/256/seed0/seed0_mid_ckpts/critic_loss_surface/middle_update22888.pkl",
+      "label": "middle",
+      "update_step": 22888,
+      "center_loss_by_case": {
+        "encoder_rnn": 2.3519763946533203,
+        "critic_mlp": 2.3519763946533203
+      }
+    },
+    {
+      "path": "/app/nas/models/ICRL/CEC/256/seed0/seed0_mid_ckpts/critic_loss_surface/final_update45776.pkl",
+      "label": "final",
+      "update_step": 45776,
+      "center_loss_by_case": {
+        "encoder_rnn": 3.7362310886383057,
+        "critic_mlp": 3.7362310886383057
+      }
+    }
+  ],
+  "grid_size": 21,
+  "radius": 0.5,
+  "direction_seed": 0,
+  "plot_value": "loss",
+  "parameter_case": "both",
+  "cases": {
+    "encoder_rnn": {
+      "title": "Shared Encoder/RNN",
+      "perturbed_modules": [
+        "Conv_0",
+        "Conv_1",
+        "Dense_0",
+        "Dense_1",
+        "ScannedRNN_0"
+      ],
+      "x_direction_norm": 112.74034881591797,
+      "y_direction_norm": 112.74028778076172,
+      "direction_cosine_similarity": 5.107687040792782e-05
+    },
+    "critic_mlp": {
+      "title": "Critic MLP",
+      "perturbed_modules": [
+        "Dense_7",
+        "Dense_8",
+        "Dense_9",
+        "Dense_10",
+        "Dense_11"
+      ],
+      "x_direction_norm": 66.9692611694336,
+      "y_direction_norm": 66.96925354003906,
+      "direction_cosine_similarity": 0.0039844830590006685
+    }
+  },
+  "biases_perturbed": false,
+  "direction_normalization": "per-output-filter parameter norm"
+}

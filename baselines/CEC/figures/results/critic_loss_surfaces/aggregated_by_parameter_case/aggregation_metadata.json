@@ -1,0 +1,562 @@
+{
+  "output_root": "/app/baselines/CEC/figures/results/critic_loss_surfaces",
+  "models": [
+    "CEC",
+    "CEC_IDDAC"
+  ],
+  "training_num_envs": null,
+  "seeds": [
+    0
+  ],
+  "parameter_cases": [
+    "encoder_rnn",
+    "critic_mlp",
+    "critic_full"
+  ],
+  "aggregation": "pointwise arithmetic mean across seeds",
+  "std": "sample std (ddof=1); zero when n=1",
+  "default_figure_scale": "independent per panel",
+  "additional_figure_scale": "shared across all panels in a case",
+  "records": [
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 9.994237899780273,
+      "mean_surface_min": 9.983357429504395,
+      "mean_surface_max": 1108.718994140625,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_full/early_update4578_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 3.736231803894043,
+      "mean_surface_min": 3.736231803894043,
+      "mean_surface_max": 6814.322265625,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_full/final_update45776_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 2.351976156234741,
+      "mean_surface_min": 2.351976156234741,
+      "mean_surface_max": 1126.0863037109375,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_full/middle_update22888_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        36621
+      ],
+      "mean_center_loss": 21.779136657714844,
+      "mean_surface_min": 21.779136657714844,
+      "mean_surface_max": 16020.392578125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env32_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_full/early_update36621_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        366210
+      ],
+      "mean_center_loss": 1.2972972393035889,
+      "mean_surface_min": 1.2972972393035889,
+      "mean_surface_max": 3065.5556640625,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env32_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_full/final_update366210_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        183105
+      ],
+      "mean_center_loss": 4.514163494110107,
+      "mean_surface_min": 4.404320240020752,
+      "mean_surface_max": 8757.4140625,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env32_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_full/middle_update183105_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 32.88505554199219,
+      "mean_surface_min": 27.707244873046875,
+      "mean_surface_max": 5059.091796875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_full/early_update4578_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 0.570607602596283,
+      "mean_surface_min": 0.570607602596283,
+      "mean_surface_max": 26171.0859375,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_full/final_update45776_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_full",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 1.9162583351135254,
+      "mean_surface_min": 1.9162583351135254,
+      "mean_surface_max": 10076.251953125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_full/CEC_IDDAC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_full/middle_update22888_critic_full_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 9.994237899780273,
+      "mean_surface_min": 9.919357299804688,
+      "mean_surface_max": 261.29534912109375,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_mlp/early_update4578_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 3.736231803894043,
+      "mean_surface_min": 3.736231803894043,
+      "mean_surface_max": 1647.6583251953125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_mlp/final_update45776_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 2.351976156234741,
+      "mean_surface_min": 2.351976156234741,
+      "mean_surface_max": 310.5598449707031,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/critic_mlp/middle_update22888_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        36621
+      ],
+      "mean_center_loss": 21.779136657714844,
+      "mean_surface_min": 21.779136657714844,
+      "mean_surface_max": 4016.487548828125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env32_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_mlp/early_update36621_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        366210
+      ],
+      "mean_center_loss": 1.2972972393035889,
+      "mean_surface_min": 1.2972972393035889,
+      "mean_surface_max": 6570.35546875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env32_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_mlp/final_update366210_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        183105
+      ],
+      "mean_center_loss": 4.514163494110107,
+      "mean_surface_min": 4.121074676513672,
+      "mean_surface_max": 1796.5633544921875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env32_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/critic_mlp/middle_update183105_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 32.88505554199219,
+      "mean_surface_min": 26.01822280883789,
+      "mean_surface_max": 4780.6923828125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_mlp/early_update4578_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 0.570607602596283,
+      "mean_surface_min": 0.570607602596283,
+      "mean_surface_max": 5648.61279296875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_mlp/final_update45776_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "critic_mlp",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 1.9162583351135254,
+      "mean_surface_min": 1.8855082988739014,
+      "mean_surface_max": 6198.4169921875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/critic_mlp/CEC_IDDAC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/critic_mlp/middle_update22888_critic_mlp_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 9.994237899780273,
+      "mean_surface_min": 9.924505233764648,
+      "mean_surface_max": 176.1312255859375,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/encoder_rnn/early_update4578_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 3.736231803894043,
+      "mean_surface_min": 3.736231803894043,
+      "mean_surface_max": 577.1370239257812,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/encoder_rnn/final_update45776_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 2.351976156234741,
+      "mean_surface_min": 2.351976156234741,
+      "mean_surface_max": 375.4543151855469,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC/env256/seed0/encoder_rnn/middle_update22888_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        36621
+      ],
+      "mean_center_loss": 21.779136657714844,
+      "mean_surface_min": 21.779136657714844,
+      "mean_surface_max": 5913.11328125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env32_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/encoder_rnn/early_update36621_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        366210
+      ],
+      "mean_center_loss": 1.2972972393035889,
+      "mean_surface_min": 1.2972972393035889,
+      "mean_surface_max": 6704.77734375,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env32_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/encoder_rnn/final_update366210_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 32,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        183105
+      ],
+      "mean_center_loss": 4.514163494110107,
+      "mean_surface_min": 4.514163494110107,
+      "mean_surface_max": 3750.13623046875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env32_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env32/seed0/encoder_rnn/middle_update183105_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "early",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        4578
+      ],
+      "mean_center_loss": 32.88505554199219,
+      "mean_surface_min": 27.744203567504883,
+      "mean_surface_max": 1813.4111328125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env256_early_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/encoder_rnn/early_update4578_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "final",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        45776
+      ],
+      "mean_center_loss": 0.570607602596283,
+      "mean_surface_min": 0.570607602596283,
+      "mean_surface_max": 3525.610107421875,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env256_final_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/encoder_rnn/final_update45776_encoder_rnn_loss_surface.npz"
+      ]
+    },
+    {
+      "parameter_case": "encoder_rnn",
+      "model": "CEC_IDDAC",
+      "training_num_envs": 256,
+      "label": "middle",
+      "num_seeds": 1,
+      "seeds": [
+        0
+      ],
+      "update_steps": [
+        22888
+      ],
+      "mean_center_loss": 1.9162583351135254,
+      "mean_surface_min": 1.9162583351135254,
+      "mean_surface_max": 1543.38330078125,
+      "npz": "/app/baselines/CEC/figures/results/critic_loss_surfaces/aggregated_by_parameter_case/encoder_rnn/CEC_IDDAC_env256_middle_seed_aggregate.npz",
+      "sources": [
+        "/app/baselines/CEC/figures/results/critic_loss_surfaces/CEC_IDDAC/env256/seed0/encoder_rnn/middle_update22888_encoder_rnn_loss_surface.npz"
+      ]
+    }
+  ]
+}

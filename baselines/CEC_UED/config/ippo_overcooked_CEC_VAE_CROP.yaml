@@ -1,0 +1,80 @@
+"ENV_NAME": "overcooked_vae_crop"  # ToyCoop or overcooked #checked
+"LR": 3e-4 #checked
+"NUM_ENVS": 512
+"NUM_SEEDS": 1
+"NUM_STEPS": 256 #checked
+"FC_DIM_SIZE": 256
+"GRU_HIDDEN_DIM": 256
+"TOTAL_TIMESTEPS": 3e9 #checked #for overcooked : 3e9
+"MAX_TRAIN_STEPS": 3e9 #checked
+"UPDATE_EPOCHS": 4 #checked
+"NUM_MINIBATCHES": 2 #checked
+"GAMMA": 0.99 #checked
+"GAE_LAMBDA": 0.95 #checked
+"CLIP_EPS": 0.2 #checked
+"SCALE_CLIP_EPS": False
+"ENT_COEF": 0.005 #checked
+"VF_COEF": 1.0 #checked
+"MOA_COEF": 1.0
+"MAX_GRAD_NORM": 0.5 #checked
+"ACTIVATION": "relu" #checked
+"ANNEAL_LR": True
+"SEED": 0
+"ENV_KWARGS": 
+  "random_reset" : True #checked # relevant for which env to train/test on. If true, it is CEC, otherwise single task
+  "max_steps": 256
+  "check_held_out": True  # if false, we don't check if the reset env is held out
+  # toy specific kwargs
+  "debug": False
+  "partial_obs": False
+  "incentivize_strat": 2 # choose [0, 1, 2, 3] for top, bottom, none, or multiple
+  # overcooked specific kwargs
+  "shuffle_inv_and_pot": False # if true, we shuffle pot status and inventory
+  "layout": "cramped_room_9"  # relevant for overcooked, all CEC compatible envs have the "_9" in the name at the end
+  "random_reset_fn": "reset_vae"  # reset_all or reset_counter_circuit
+"TRAINING": True
+"TRAIN_KWARGS":
+  "ckpt_id": 0 # loads from ckpt_id - 1 if available
+  "overwrite_ckpt": True # if true, will overwrite ckpt_id
+  "finetune": False # if true, load from opposing paradigm and cut learning rate by 10x
+  "e3t_beta": 0.55  # how much randomness to add to probabilities of one partner. If 0 then it's completely uniform, if 1 then it's same as original, if higher than 1 we're magnifying the extremes
+"TEST_KWARGS":
+  "beta": 1.0
+  "argmax": False  # otherwise we sample from policy
+  "num_trajs": 2
+  "plot": False  # if true, will get precedence over saving data
+  "self_play": False  # get's full cross play matrix
+  "ik": False # relevant to which model to load (ik vs sk)
+  "debug": False
+  "use_ckpt": True  # if true, will load from ckpt_id, otherwise will load from latest
+"CONV_NET": True
+"LSTM": True
+"FCP": False
+"FCP_KWARGS":
+  "train_oracle": True
+# WandB Params
+"ENTITY": "overcooked_ai"                                          
+"PROJECT": "crossenv_ued_vae_ippo"
+"WANDB_MODE" : "disabled"
+"model_name": "IPPO_CEC_VAE_CROP"
+# VAE params
+"VAE_CKPT_PATH": "/app/baselines/CEC_UED/VAE/checkpoints/layout_1e6_coord_ring/crop/lr-20260320-131854/vae_seed0_kl70.pkl"
+"z_dim": 16 # replace with vae config
+"kl_coeff": 5.0
+"entropy_coeff": 0.01
+"use_mean_clipping": False
+"clip_mean_min": -0.5
+"clip_mean_max": 0.5
+"use_std_scaling": False
+"scale_log_std": 4.0
+"scale_std_offset": 1.0
+"gen_hidden_dim": 128
+"use_kl": True
+"use_entropy": False
+"adversary_learning_rate": 0.0005
+"adversary_weight_decay": 0.0001
+"use_grad_clip": False
+"grad_clip_norm": 0.5
+"use_lr_scheduler": False
+"save_frames": False
+"z_list_size": 10

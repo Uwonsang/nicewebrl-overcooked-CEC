@@ -1,0 +1,75 @@
+{
+  "snapshot_dir": "/app/nas/models/ICRL/CEC_IDDAC/32/seed0/seed0_mid_ckpts/critic_loss_surface",
+  "model": "CEC_IDDAC",
+  "algorithm": "IDAAC",
+  "snapshots": [
+    {
+      "path": "/app/nas/models/ICRL/CEC_IDDAC/32/seed0/seed0_mid_ckpts/critic_loss_surface/early_update36621.pkl",
+      "label": "early",
+      "update_step": 36621,
+      "center_loss_by_case": {
+        "critic_full": 21.779136657714844
+      }
+    },
+    {
+      "path": "/app/nas/models/ICRL/CEC_IDDAC/32/seed0/seed0_mid_ckpts/critic_loss_surface/middle_update183105.pkl",
+      "label": "middle",
+      "update_step": 183105,
+      "center_loss_by_case": {
+        "critic_full": 4.514163494110107
+      }
+    },
+    {
+      "path": "/app/nas/models/ICRL/CEC_IDDAC/32/seed0/seed0_mid_ckpts/critic_loss_surface/final_update366210.pkl",
+      "label": "final",
+      "update_step": 366210,
+      "center_loss_by_case": {
+        "critic_full": 1.2972972393035889
+      }
+    }
+  ],
+  "grid_size": 51,
+  "radius": 1.0,
+  "direction_seed": 0,
+  "parameter_case": "critic_full",
+  "cases": {
+    "critic_full": {
+      "title": "Full Critic Path",
+      "perturbed_modules": [
+        "critic_trunk",
+        "critic_hidden_0",
+        "critic_hidden_1",
+        "critic_hidden_2",
+        "critic_hidden_3",
+        "critic_output"
+      ],
+      "directions_by_snapshot": [
+        {
+          "label": "early",
+          "update_step": 36621,
+          "x_direction_norm": 152.3421173095703,
+          "y_direction_norm": 152.34222412109375,
+          "direction_cosine_similarity": 0.000706961485223849
+        },
+        {
+          "label": "middle",
+          "update_step": 183105,
+          "x_direction_norm": 208.16908264160156,
+          "y_direction_norm": 208.1690216064453,
+          "direction_cosine_similarity": 0.0009285101819376005
+        },
+        {
+          "label": "final",
+          "update_step": 366210,
+          "x_direction_norm": 220.71353149414062,
+          "y_direction_norm": 220.7136993408203,
+          "direction_cosine_similarity": 0.0008504732253053897
+        }
+      ]
+    }
+  },
+  "biases_perturbed": false,
+  "direction_normalization": "per-output-filter parameter norm",
+  "direction_reference": "each snapshot's own parameter filters",
+  "directions_shared_across_snapshots": false
+}

@@ -1,0 +1,14 @@
+"ENV_NAME": "overcooked"  # ToyCoop or overcooked #checked
+"NUM_ENVS": 500
+"SEED": 0
+"ENV_KWARGS": 
+  "random_reset" : True #checked # relevant for which env to train/test on. If true, it is CEC, otherwise single task
+  "max_steps": 400
+  "check_held_out": True  # if false, we don't check if the reset env is held out
+  # overcooked specific kwargs
+  "shuffle_inv_and_pot": False # if true, we shuffle pot status and inventory
+  "layout": "cramped_room_9"  # relevant for overcooked, all CEC compatible envs have the "_9" in the name at the end
+  "random_reset_fn": "reset_all"  # reset_all or reset_counter_circuit, reset_coord_ring, reset_forced_coord
+"VIZ_STEPS": 100 # None=all, or e.g. slice(0,100), [0,1,2], 0
+"use_obs": True
+"NUM_LAYOUTS": 1e7

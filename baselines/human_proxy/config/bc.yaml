@@ -1,0 +1,16 @@
+"LR": 0.0001
+"BATCH_SIZE": 256
+"NUM_EPOCHS": 100
+"ACTIVATION": "relu"
+"MAX_GRAD_NORM": 0.5
+"SEED": 0
+"DATA_DIR": "baselines/human_proxy/data/processed"
+"DATA_STEM": "2019_hh_trials"
+# one of: cramped_room, coord_ring, asymm_advantages, forced_coord, counter_circuit
+"LAYOUT": "cramped_room"
+"CKPT_DIR": "baselines/human_proxy/checkpoints"
+
+# WandB Params
+"ENTITY": "overcooked_ai"
+"PROJECT": "crossenv_bc"
+"WANDB_MODE": "disabled"

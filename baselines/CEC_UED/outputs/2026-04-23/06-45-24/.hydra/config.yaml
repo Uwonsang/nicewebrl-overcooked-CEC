@@ -1,0 +1,69 @@
+ENV_NAME: overcooked
+LR: 0.0003
+NUM_ENVS: 128
+NUM_SEEDS: 1
+NUM_STEPS: 400
+FC_DIM_SIZE: 256
+GRU_HIDDEN_DIM: 256
+TOTAL_TIMESTEPS: 3000000.0
+MAX_TRAIN_STEPS: 3000000.0
+UPDATE_EPOCHS: 4
+NUM_MINIBATCHES: 2
+GAMMA: 0.99
+GAE_LAMBDA: 0.95
+CLIP_EPS: 0.2
+SCALE_CLIP_EPS: false
+ENT_COEF: 0.005
+VF_COEF: 1.0
+MOA_COEF: 1.0
+MAX_GRAD_NORM: 0.5
+ACTIVATION: relu
+ANNEAL_LR: true
+SEED: 0
+ENV_KWARGS:
+  random_reset: true
+  max_steps: 400
+  check_held_out: true
+  debug: false
+  partial_obs: false
+  incentivize_strat: 2
+  shuffle_inv_and_pot: false
+  layout: cramped_room_9
+  random_reset_fn: reset_all
+TRAINING: true
+TRAIN_KWARGS:
+  ckpt_id: 0
+  overwrite_ckpt: true
+  finetune: false
+  e3t_beta: 0.55
+TEST_KWARGS:
+  beta: 1.0
+  argmax: false
+  num_trajs: 2
+  plot: false
+  self_play: false
+  ik: false
+  debug: false
+  use_ckpt: true
+CONV_NET: true
+LSTM: true
+FCP: false
+FCP_KWARGS:
+  train_oracle: true
+ENTITY: overcooked_ai
+PROJECT: crossenv_ued
+WANDB_MODE: disabled
+model_name: CEC
+save_frames: false
+save_frames_interval: 200
+EVAL_KWARGS:
+  eval_interval: 10
+  num_envs: 5
+  num_steps: 400
+  max_steps: 400
+  random_reset: false
+  check_held_out: false
+  shuffle_inv_and_pot: false
+  random_reset_fn: reset_all
+  beta: 1.0
+  argmax: false

@@ -1,0 +1,23 @@
+defaults:
+  - cross_algo
+  - _self_
+
+# Same generated tasks/PRNG indices as test_general_pcg.py; no original tasks.
+PCG_NUM_TASKS: 100
+SAVE_PATH: ${MODEL_PATH}/pcg_xp_results_diff_algo
+XP_ONLY: true
+OVERWRITE: false
+ENV_KWARGS:
+  check_held_out: false
+  random_reset: false
+  shuffle_inv_and_pot: false
+TEST_KWARGS:
+  num_trajs: 5
+
+# Keep Hydra logs beside the evaluation output. Some shared workspaces have a
+# read-only top-level outputs/ directory.
+hydra:
+  run:
+    dir: ${SAVE_PATH}/hydra/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    chdir: false

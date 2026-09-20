@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}"
+
 # Single-algorithm form:
 #   ./run_model_human_proxy_xp.sh ippo /path/to/ICRL
 #
@@ -10,10 +13,15 @@ set -euo pipefail
 MODEL_ROOT="${MODEL_ROOT:-/mnt/nas/wonsang/crossenv_ued/models/ICRL}"
 HUMAN_PROXY_ROOT="${HUMAN_PROXY_ROOT:-human_proxy/checkpoints}"
 OUTPUT_DIR="${OUTPUT_DIR:-}"
-PYTHON_BIN="${PYTHON_BIN:-python}"
+UV_BIN="${UV_BIN:-uv}"
 EPISODES="${EPISODES:-1}"
 MAX_TIMESTEPS="${MAX_TIMESTEPS:-200}"
 WORLD_SEED="${WORLD_SEED:-1}"
+
+if ! command -v "${UV_BIN}" >/dev/null 2>&1; then
+  echo "uv was not found. Install uv or set UV_BIN to its executable path." >&2
+  exit 1
+fi
 
 CHECKPOINT_PATH=""
 if [[ $# -ge 1 && "${1}" != -* ]]; then
@@ -56,7 +64,7 @@ for algorithm in "${ALGORITHM_LIST[@]}"; do
     echo "[$(date --iso-8601=seconds)] starting ${run_name}" | tee -a "${log_path}"
 
     command=(
-      "${PYTHON_BIN}" model_human_proxy_xp.py
+      "${UV_BIN}" run python model_human_proxy_xp.py
       --model-root "${MODEL_ROOT}"
       --human-proxy-root "${HUMAN_PROXY_ROOT}"
       --output-dir "${OUTPUT_DIR}"

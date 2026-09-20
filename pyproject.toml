@@ -10,7 +10,7 @@ dependencies = [
     "aiohttp",
     "requests",
     "scipy",
-    "jax[cuda12-pip]==0.4.26",
+    "jax[cuda12-pip]>=0.4.26",
 ]
 
 [project.optional-dependencies]

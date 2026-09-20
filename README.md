@@ -102,9 +102,45 @@ script finds the appropriate algorithm and layout directories automatically:
   ippo /mnt/nas/wonsang/crossenv_ued/models/ICRL
 ```
 
-The script invokes `python` directly and therefore does not install or update
-packages. Activate the project environment first, or select its interpreter
-without activation via `PYTHON_BIN=.venv/bin/python`.
+The script runs each evaluation with `uv run python`. Before execution, `uv`
+checks the environment against `pyproject.toml` and the lockfile and uses the
+project virtual environment. Set `UV_BIN` only when the `uv` executable is not
+available as `uv` on `PATH`.
+
+### Running the model/proxy sweep in Docker
+
+The Dockerfile installs `uv` at `/bin/uv`. Build the image when the source is
+not bind-mounted into an existing container:
+
+```bash
+docker build -t overcooked-xp .
+```
+
+Run the sweep while mounting the NAS directory needed for checkpoints and
+output:
+
+```bash
+docker run --rm --gpus all \
+  -v /mnt/nas/wonsang:/app/nas/wonsang \
+  overcooked-xp \
+  bash /app/run_model_human_proxy_xp.sh \
+    ippo /app/nas/wonsang/crossenv_ued/models/ICRL
+```
+
+Inside an already running container, the equivalent command is:
+
+```bash
+cd /app
+bash run_model_human_proxy_xp.sh \
+  ippo /app/nas/wonsang/crossenv_ued/models/ICRL
+```
+
+To verify the environment inside the container before starting a full sweep:
+
+```bash
+cd /app
+uv run python -c "import jaxmarl; print(jaxmarl.__file__)"
+```
 
 The same ICRL root works for shared CEC checkpoints:
 

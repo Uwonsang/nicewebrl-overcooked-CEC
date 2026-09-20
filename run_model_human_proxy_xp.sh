@@ -13,13 +13,13 @@ cd "${SCRIPT_DIR}"
 MODEL_ROOT="${MODEL_ROOT:-/mnt/nas/wonsang/crossenv_ued/models/ICRL}"
 HUMAN_PROXY_ROOT="${HUMAN_PROXY_ROOT:-human_proxy/checkpoints}"
 OUTPUT_DIR="${OUTPUT_DIR:-}"
-UV_BIN="${UV_BIN:-uv}"
+PYTHON_BIN="${PYTHON_BIN:-python}"
 EPISODES="${EPISODES:-1}"
 MAX_TIMESTEPS="${MAX_TIMESTEPS:-200}"
 WORLD_SEED="${WORLD_SEED:-1}"
 
-if ! command -v "${UV_BIN}" >/dev/null 2>&1; then
-  echo "uv was not found. Install uv or set UV_BIN to its executable path." >&2
+if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+  echo "Python was not found. Set PYTHON_BIN to the Docker Python executable." >&2
   exit 1
 fi
 
@@ -64,7 +64,7 @@ for algorithm in "${ALGORITHM_LIST[@]}"; do
     echo "[$(date --iso-8601=seconds)] starting ${run_name}" | tee -a "${log_path}"
 
     command=(
-      "${UV_BIN}" run python model_human_proxy_xp.py
+      "${PYTHON_BIN}" model_human_proxy_xp.py
       --model-root "${MODEL_ROOT}"
       --human-proxy-root "${HUMAN_PROXY_ROOT}"
       --output-dir "${OUTPUT_DIR}"
